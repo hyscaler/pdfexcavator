@@ -19,6 +19,40 @@ If you're coming from Python and looking for pdfplumber-like functionality in No
 - **CLI Tool** - Command-line extraction
 - **TypeScript** - Full type definitions
 
+## PDFLens vs pdfplumber
+
+| Feature | PDFLens (Node.js) | pdfplumber (Python) |
+|---------|-------------------|---------------------|
+| **Text Extraction** | ✅ Full support | ✅ Full support |
+| **Table Extraction** | ✅ With confidence scoring | ✅ Basic |
+| **Borderless Tables** | ✅ Projection profile analysis | ✅ Basic |
+| **Nested Tables** | ✅ Supported | ❌ Not supported |
+| **Character-level Data** | ✅ With colors, fonts | ✅ Basic |
+| **Word Extraction** | ✅ Configurable tolerance | ✅ Basic |
+| **Graphics (lines/rects/curves)** | ✅ Full support | ✅ Full support |
+| **Image Extraction** | ✅ Metadata + render | ✅ Basic |
+| **Annotations** | ✅ Full support | ✅ Basic |
+| **OCR Integration** | ✅ Tesseract.js | ⚠️ External only |
+| **Layout Analysis (LAParams)** | ✅ Full pdfminer-style | ✅ Full support |
+| **Multi-Column Detection** | ✅ Auto-detect & extract | ❌ Manual |
+| **CJK Text Support** | ✅ Full CMap support | ✅ Full support |
+| **Font Substitution** | ✅ Auto for 14 base fonts | ❌ Not available |
+| **Precision Mode** | ✅ Full state tracking | ❌ Not available |
+| **Visual Debugging** | ✅ Render + draw annotations | ✅ Similar |
+| **PDF Repair** | ✅ Built-in | ❌ Not available |
+| **CLI Tool** | ✅ Built-in | ❌ Not built-in |
+| **TypeScript Types** | ✅ Full definitions | N/A (Python) |
+| **Async/Streaming** | ✅ Native async | ⚠️ Synchronous |
+| **Large PDF Handling** | ✅ Concurrent processing | ⚠️ Sequential |
+
+### Why Choose PDFLens?
+
+- **Node.js/TypeScript native** - No Python dependency, seamless JavaScript integration
+- **Modern async API** - Non-blocking operations, concurrent page processing
+- **Enhanced table detection** - Confidence scoring, nested tables, borderless detection
+- **Built-in CLI** - Quick extraction without writing code
+- **Active maintenance** - Built on Mozilla's pdf.js
+
 ## Installation
 
 ```bash

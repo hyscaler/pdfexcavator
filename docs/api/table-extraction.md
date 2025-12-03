@@ -46,22 +46,30 @@ const chars = await page.chars;
 const lines = await page.getLines();
 const rects = await page.getRects();
 
-const finder = new TableFinder(chars, lines, rects);
-const tables = finder.findTables();
+const finder = new TableFinder(chars, lines, rects, page.pageNumber, {
+  verticalStrategy: 'lines',
+  horizontalStrategy: 'lines'
+});
+const result = finder.findTables();
+console.log(result.tables);
 ```
 
-### findTables(chars, lines, rects, options?)
+### findTables(chars, lines, rects, pageNumber, options?)
 
-Find tables in page content.
+Find tables in page content with debug information.
 
 ```typescript
 import { findTables } from 'pdflens';
 
-const tables = findTables(chars, lines, rects, {
+const result = findTables(chars, lines, rects, 0, {
   snapTolerance: 3,
   minWordsVertical: 3,
   minWordsHorizontal: 1
 });
+
+console.log(result.tables);       // Found tables
+console.log(result.edges);        // Detected edges
+console.log(result.intersections); // Edge intersections
 ```
 
 ### extractTables(chars, lines, rects, pageNumber, options?)
@@ -140,12 +148,22 @@ console.log('Intersections:', debug.intersections.length);
 
 ```typescript
 interface TableExtractionOptions {
-  strategy?: 'lines' | 'text';     // Detection strategy
-  snapTolerance?: number;          // Edge alignment tolerance (default: 3)
-  minWordsVertical?: number;       // Min words for column (default: 3)
-  minWordsHorizontal?: number;     // Min words for row (default: 1)
+  verticalStrategy?: 'lines' | 'lines_strict' | 'text' | 'explicit';   // Vertical edge detection strategy
+  horizontalStrategy?: 'lines' | 'lines_strict' | 'text' | 'explicit'; // Horizontal edge detection strategy
   explicitVerticalLines?: number[];   // Explicit column positions
   explicitHorizontalLines?: number[]; // Explicit row positions
+  snapTolerance?: number;             // Edge alignment tolerance (default: 3)
+  joinTolerance?: number;             // Tolerance for joining nearby edges (default: 3)
+  edgeMinLength?: number;             // Minimum edge length (default: 3)
+  minWordsVertical?: number;          // Min words for column detection (default: 3)
+  minWordsHorizontal?: number;        // Min words for row detection (default: 1)
+  keepBlankChars?: boolean;           // Keep blank characters in text extraction
+  textTolerance?: number;             // Text grouping tolerance (default: 3)
+  textXTolerance?: number | null;     // Horizontal text tolerance (overrides textTolerance)
+  textYTolerance?: number | null;     // Vertical text tolerance (overrides textTolerance)
+  intersectionTolerance?: number;     // Intersection detection tolerance (default: 3)
+  intersectionXTolerance?: number | null; // Horizontal intersection tolerance
+  intersectionYTolerance?: number | null; // Vertical intersection tolerance
 }
 ```
 
@@ -170,10 +188,14 @@ interface PDFTable {
 ```typescript
 interface TableCell {
   text: string;
-  bbox: [number, number, number, number];
-  rowSpan?: number;
-  colSpan?: number;
-  chars?: PDFChar[];
+  x0: number;           // Left position
+  y0: number;           // Top position
+  x1: number;           // Right position
+  y1: number;           // Bottom position
+  top: number;          // Top position (alias for y0)
+  bottom: number;       // Bottom position (alias for y1)
+  rowSpan?: number;     // Number of rows this cell spans
+  colSpan?: number;     // Number of columns this cell spans
 }
 ```
 

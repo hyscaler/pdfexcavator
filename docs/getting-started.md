@@ -101,17 +101,20 @@ await pdf.close();
 
 ## CommonJS Usage
 
-```javascript
-const pdflens = require('pdflens');
+PDFLens is an ESM-only package. To use it in CommonJS projects, use dynamic import:
 
+```javascript
 async function main() {
-  const pdf = await pdflens.default.open('document.pdf');
+  const { default: pdflens } = await import('pdflens');
+  const pdf = await pdflens.open('document.pdf');
   // ... work with PDF
   await pdf.close();
 }
 
 main();
 ```
+
+Alternatively, rename your file to `.mjs` or set `"type": "module"` in your `package.json`.
 
 ## CLI Quick Start
 

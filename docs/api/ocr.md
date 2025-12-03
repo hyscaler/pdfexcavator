@@ -70,39 +70,53 @@ if (!available) {
 }
 ```
 
-### performOCR(imageBuffer, options?)
+### performOCR(imageBuffer, pageNumber, pageHeight, doctopOffset, options?)
 
 Perform OCR on an image buffer.
 
 ```typescript
 import { performOCR } from 'pdflens';
 
-const result = await performOCR(imageBuffer, {
-  lang: 'eng+fra',  // Multiple languages
-  psm: 3
-});
+const result = await performOCR(
+  imageBuffer,
+  0,              // pageNumber
+  792,            // pageHeight
+  0,              // doctopOffset
+  {
+    lang: 'eng+fra',  // Multiple languages
+    psm: 3
+  }
+);
 ```
 
-### needsOCR(chars, images)
+### needsOCR(charCount, imageCount, pageArea, imageArea)
 
-Check if content needs OCR.
+Check if content needs OCR based on character and image metrics.
 
 ```typescript
 import { needsOCR } from 'pdflens';
 
 const chars = await page.chars;
 const images = await page.getImages();
-const needs = needsOCR(chars, images);
+const { width, height } = await page.size;
+const pageArea = width * height;
+const imageArea = images.reduce((sum, img) => sum + img.width * img.height, 0);
+
+const needs = needsOCR(chars.length, images.length, pageArea, imageArea);
 ```
 
-### isLikelyScanned(imageBuffer)
+### isLikelyScanned(charCount, images, pageWidth, pageHeight)
 
-Check if image buffer is likely a scan.
+Check if a page is likely a scanned document.
 
 ```typescript
 import { isLikelyScanned } from 'pdflens';
 
-const isScanned = isLikelyScanned(buffer);
+const chars = await page.chars;
+const images = await page.getImages();
+const { width, height } = await page.size;
+
+const isScanned = isLikelyScanned(chars.length, images, width, height);
 ```
 
 ### terminateOCR()
@@ -141,9 +155,15 @@ if (available) {
 
 ```typescript
 interface OCROptions {
-  lang?: string;      // Language code(s) (default: 'eng')
-  psm?: number;       // Page segmentation mode
-  oem?: number;       // OCR engine mode
+  lang?: string;                        // Language code(s) (default: 'eng')
+  oem?: number;                         // OCR Engine Mode (0=Legacy, 1=LSTM, 2=Legacy+LSTM, 3=Default)
+  psm?: number;                         // Page segmentation mode
+  tesseractParams?: Record<string, string>;  // Custom tesseract parameters
+  minConfidence?: number;               // Minimum confidence to include a word (0-100, default: 60)
+  preserveWhitespace?: boolean;         // Whether to preserve whitespace
+  workerCount?: number;                 // Worker pool size for parallel processing
+  langPath?: string;                    // Path to trained data files (for Node.js)
+  logger?: (message: string) => void;   // Whether to log progress
 }
 ```
 
@@ -152,9 +172,12 @@ interface OCROptions {
 ```typescript
 interface OCRResult {
   text: string;           // Full extracted text
-  confidence: number;     // Overall confidence (0-100)
-  words?: OCRWord[];      // Word-level results
-  lines?: OCRLine[];      // Line-level results
+  chars: PDFChar[];       // Extracted characters with positions
+  words: PDFWord[];       // Extracted words with positions
+  lines: PDFTextLine[];   // Extracted lines with positions
+  confidence: number;     // Average confidence (0-100)
+  processingTime: number; // Time taken in ms
+  ocrPerformed: boolean;  // Whether OCR was actually performed
 }
 ```
 

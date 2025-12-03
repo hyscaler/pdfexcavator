@@ -264,6 +264,8 @@ export interface TextExtractionOptions {
 /** Options for word extraction */
 export interface WordExtractionOptions {
   xTolerance?: number;
+  /** Dynamic tolerance as ratio of character size (overrides xTolerance) */
+  xToleranceRatio?: number | null;
   yTolerance?: number;
   keepBlankChars?: boolean;
   useTextFlow?: boolean;

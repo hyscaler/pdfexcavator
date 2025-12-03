@@ -85,14 +85,14 @@ for (const word of words) {
 | chars | `PDFChar[]` | Characters in word |
 | direction | `'ltr' \| 'rtl'` | Text direction |
 
-### extractLines(chars, options?)
+### extractLines(chars, yTolerance?)
 
 Group characters into lines.
 
 ```typescript
 import { extractLines } from 'pdflens';
 
-const lines = extractLines(chars, { yTolerance: 3 });
+const lines = extractLines(chars, 3);  // yTolerance defaults to 3
 
 for (const line of lines) {
   console.log(line.text);
@@ -160,12 +160,13 @@ interface TextExtractionOptions {
 
 ```typescript
 interface WordExtractionOptions {
-  xTolerance?: number;           // Horizontal tolerance
-  yTolerance?: number;           // Vertical tolerance
-  keepBlankChars?: boolean;      // Keep blanks
-  useTextFlow?: boolean;         // Use PDF flow
-  splitAtPunctuation?: boolean;  // Split at punctuation
-  extraAttrs?: string[];         // Extra attributes to copy
+  xTolerance?: number;              // Horizontal tolerance (default: 3)
+  xToleranceRatio?: number | null;  // Tolerance as ratio of char size (overrides xTolerance)
+  yTolerance?: number;              // Vertical tolerance (default: 3)
+  keepBlankChars?: boolean;         // Keep blank characters (default: false)
+  useTextFlow?: boolean;            // Use PDF text flow order (default: true)
+  splitAtPunctuation?: boolean | string[];  // Split at punctuation (default: false)
+  extraAttrs?: string[];            // Extra attributes to copy
 }
 ```
 

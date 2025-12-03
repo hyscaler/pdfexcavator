@@ -30,7 +30,7 @@ const DEFAULT_TEXT_OPTIONS: Required<TextExtractionOptions> = {
 };
 
 /** Default word extraction options */
-const DEFAULT_WORD_OPTIONS: Required<WordExtractionOptions> & { xToleranceRatio: number | null } = {
+const DEFAULT_WORD_OPTIONS: Required<WordExtractionOptions> = {
   xTolerance: 3,
   xToleranceRatio: null,
   yTolerance: 3,
@@ -357,7 +357,7 @@ export async function extractCharsWithFontMetrics(
  */
 export function extractWords(
   chars: PDFChar[],
-  options: WordExtractionOptions & { xToleranceRatio?: number | null } = {}
+  options: WordExtractionOptions = {}
 ): PDFWord[] {
   const opts = { ...DEFAULT_WORD_OPTIONS, ...options };
 
