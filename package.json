@@ -1,0 +1,84 @@
+{
+  "name": "pdflens",
+  "version": "0.1.0",
+  "description": "A powerful PDF extraction library for Node.js built on Mozilla's pdf.js - extract text, tables, and visual elements with precision",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "pdflens": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "pdf",
+    "pdfjs",
+    "pdf.js",
+    "mozilla",
+    "extract",
+    "text",
+    "table",
+    "parse",
+    "document",
+    "ocr",
+    "tesseract",
+    "cjk",
+    "layout",
+    "font",
+    "typescript"
+  ],
+  "author": "PDFLens Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hyscaler/pdflens.git"
+  },
+  "homepage": "https://github.com/hyscaler/pdflens#readme",
+  "bugs": {
+    "url": "https://github.com/hyscaler/pdflens/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "pdfjs-dist": "^4.7.76"
+  },
+  "optionalDependencies": {
+    "canvas": "^2.11.0",
+    "tesseract.js": "^5.0.0"
+  },
+  "peerDependencies": {
+    "canvas": "^2.11.0",
+    "tesseract.js": "^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "canvas": {
+      "optional": true
+    },
+    "tesseract.js": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.10.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.5",
+    "typescript": "^5.3.0"
+  }
+}
