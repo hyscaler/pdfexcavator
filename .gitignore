@@ -35,6 +35,7 @@ yarn-error.log*
 # TypeScript cache
 *.tsbuildinfo
 
-# Test PDFs (keep example PDFs)
+# Test PDFs (keep example and fixture PDFs)
 *.pdf
 !examples/*.pdf
+!fixtures/*.pdf
