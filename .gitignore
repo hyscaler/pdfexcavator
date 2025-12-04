@@ -38,4 +38,3 @@ yarn-error.log*
 # Test PDFs (keep example and fixture PDFs)
 *.pdf
 !examples/*.pdf
-!fixtures/*.pdf
