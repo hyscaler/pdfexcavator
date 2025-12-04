@@ -1,6 +1,6 @@
 {
   "name": "pdfexcavator",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A powerful PDF extraction library for Node.js built on Mozilla's pdf.js - extract text, tables, and visual elements with precision",
   "type": "module",
   "main": "./dist/index.js",
