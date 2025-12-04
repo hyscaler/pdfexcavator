@@ -69,6 +69,6 @@ await pdf.close();
 
 ## Links
 
-- [GitHub Repository](https://github.com/nicobrinkkemper/pdfexcavator)
+- [GitHub Repository](https://github.com/hyscaler/pdfexcavator)
 - [npm Package](https://www.npmjs.com/package/pdfexcavator)
-- [Issue Tracker](https://github.com/nicobrinkkemper/pdfexcavator/issues)
+- [Issue Tracker](https://github.com/hyscaler/pdfexcavator/issues)

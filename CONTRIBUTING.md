@@ -13,7 +13,7 @@ Thank you for your interest in contributing to PDFExcavator! This document provi
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/pdfexcavator/pdfexcavator.git
+   git clone https://github.com/hyscaler/pdfexcavator.git
    cd pdfexcavator
    ```
 
