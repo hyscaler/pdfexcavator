@@ -45,7 +45,6 @@ export function repairPDF(
   let repaired = false;
   let workingData = data instanceof Buffer ? new Uint8Array(data) : data;
 
-  // Check size limit
   if (workingData.length > opts.maxSize) {
     return {
       repaired: false,
@@ -53,7 +52,6 @@ export function repairPDF(
     };
   }
 
-  // Check for PDF header
   const headerCheck = checkHeader(workingData);
   if (!headerCheck.valid) {
     issues.push(headerCheck.issue!);
@@ -63,7 +61,6 @@ export function repairPDF(
     }
   }
 
-  // Check for EOF marker
   if (opts.fixEOF) {
     const eofCheck = checkEOF(workingData);
     if (!eofCheck.valid) {
@@ -75,17 +72,13 @@ export function repairPDF(
     }
   }
 
-  // Check for xref issues
   if (opts.rebuildXref) {
     const xrefCheck = checkXref(workingData);
     if (!xrefCheck.valid) {
       issues.push(xrefCheck.issue!);
-      // Note: xref rebuilding is complex; we just flag the issue
-      // pdf.js has built-in xref recovery that handles most cases
     }
   }
 
-  // Check for common encoding issues
   const encodingCheck = checkEncoding(workingData);
   if (!encodingCheck.valid) {
     issues.push(encodingCheck.issue!);
@@ -108,7 +101,6 @@ export function repairPDF(
 function checkHeader(data: Uint8Array): { valid: boolean; issue?: string; fixedData?: Uint8Array } {
   const headerStr = new TextDecoder().decode(data.slice(0, Math.min(1024, data.length)));
 
-  // Check for %PDF- marker
   const pdfIndex = headerStr.indexOf('%PDF-');
   if (pdfIndex === -1) {
     return {
@@ -117,7 +109,6 @@ function checkHeader(data: Uint8Array): { valid: boolean; issue?: string; fixedD
     };
   }
 
-  // If PDF marker is not at the start, try to fix by removing garbage
   if (pdfIndex > 0) {
     const fixedData = data.slice(pdfIndex);
     return {
@@ -127,7 +118,6 @@ function checkHeader(data: Uint8Array): { valid: boolean; issue?: string; fixedD
     };
   }
 
-  // Check version
   const versionMatch = headerStr.match(/%PDF-(\d+\.\d+)/);
   if (versionMatch) {
     const version = parseFloat(versionMatch[1]);
@@ -146,17 +136,14 @@ function checkHeader(data: Uint8Array): { valid: boolean; issue?: string; fixedD
  * Check EOF marker
  */
 function checkEOF(data: Uint8Array): { valid: boolean; issue?: string; fixedData?: Uint8Array } {
-  // Check last 1KB for %%EOF marker
   const tailSize = Math.min(1024, data.length);
   const tailStr = new TextDecoder().decode(data.slice(-tailSize));
 
   if (tailStr.includes('%%EOF')) {
-    // Check for trailing garbage after %%EOF
     const eofIndex = tailStr.lastIndexOf('%%EOF');
     const afterEOF = tailStr.slice(eofIndex + 5).trim();
 
     if (afterEOF.length > 0) {
-      // Has trailing garbage, but PDF is still valid
       return {
         valid: true,
         issue: 'Trailing garbage after %%EOF',
@@ -166,7 +153,6 @@ function checkEOF(data: Uint8Array): { valid: boolean; issue?: string; fixedData
     return { valid: true };
   }
 
-  // Missing %%EOF - try to add it
   const fixedData = new Uint8Array(data.length + 7);
   fixedData.set(data);
   fixedData.set(new TextEncoder().encode('\n%%EOF\n'), data.length);
@@ -184,12 +170,10 @@ function checkEOF(data: Uint8Array): { valid: boolean; issue?: string; fixedData
 function checkXref(data: Uint8Array): { valid: boolean; issue?: string } {
   const text = new TextDecoder().decode(data);
 
-  // Look for xref keyword
   const xrefIndex = text.lastIndexOf('xref');
   const startxrefIndex = text.lastIndexOf('startxref');
 
   if (xrefIndex === -1 && startxrefIndex === -1) {
-    // Might be using object streams (xref stream) which is valid
     if (text.includes('/Type /XRef')) {
       return { valid: true };
     }
@@ -206,7 +190,6 @@ function checkXref(data: Uint8Array): { valid: boolean; issue?: string } {
     };
   }
 
-  // Check if startxref points to valid location
   const startxrefMatch = text.slice(startxrefIndex).match(/startxref\s*(\d+)/);
   if (startxrefMatch) {
     const offset = parseInt(startxrefMatch[1], 10);
@@ -225,7 +208,6 @@ function checkXref(data: Uint8Array): { valid: boolean; issue?: string } {
  * Check for encoding issues
  */
 function checkEncoding(data: Uint8Array): { valid: boolean; issue?: string; fixedData?: Uint8Array } {
-  // Check for null bytes in header region (common corruption)
   const headerRegion = data.slice(0, Math.min(100, data.length));
   let nullCount = 0;
   for (let i = 0; i < headerRegion.length; i++) {
@@ -239,9 +221,7 @@ function checkEncoding(data: Uint8Array): { valid: boolean; issue?: string; fixe
     };
   }
 
-  // Check for BOM markers that might confuse parsing
   if (data[0] === 0xEF && data[1] === 0xBB && data[2] === 0xBF) {
-    // UTF-8 BOM - remove it
     return {
       valid: false,
       issue: 'UTF-8 BOM removed from start of file',
@@ -250,7 +230,6 @@ function checkEncoding(data: Uint8Array): { valid: boolean; issue?: string; fixe
   }
 
   if ((data[0] === 0xFF && data[1] === 0xFE) || (data[0] === 0xFE && data[1] === 0xFF)) {
-    // UTF-16 BOM - file is likely corrupt
     return {
       valid: false,
       issue: 'UTF-16 BOM found (file may be corrupted or encoded incorrectly)',
@@ -266,17 +245,11 @@ function checkEncoding(data: Uint8Array): { valid: boolean; issue?: string; fixe
 export function isPDFLike(data: Uint8Array | Buffer): boolean {
   const bytes = data instanceof Buffer ? new Uint8Array(data) : data;
 
-  // Check first 8KB for PDF markers
   const checkSize = Math.min(8192, bytes.length);
   const text = new TextDecoder().decode(bytes.slice(0, checkSize));
 
-  // Look for PDF signature
   if (text.includes('%PDF-')) return true;
-
-  // Look for PDF objects
   if (text.match(/\d+\s+\d+\s+obj/)) return true;
-
-  // Look for PDF streams
   if (text.includes('stream') && text.includes('endstream')) return true;
 
   return false;
@@ -298,28 +271,19 @@ export function analyzePDF(data: Uint8Array | Buffer): {
   const text = new TextDecoder().decode(bytes);
   const issues: string[] = [];
 
-  // Extract version
   const versionMatch = text.match(/%PDF-(\d+\.\d+)/);
   const version = versionMatch ? versionMatch[1] : undefined;
 
-  // Check linearization
   const linearized = text.includes('/Linearized');
-
-  // Check encryption
   const encrypted = text.includes('/Encrypt');
-
-  // Check for xref stream
   const hasXrefStream = text.includes('/Type /XRef');
 
-  // Count objects
   const objectMatches = text.match(/\d+\s+\d+\s+obj/g);
   const objectCount = objectMatches ? objectMatches.length : 0;
 
-  // Count streams
   const streamMatches = text.match(/stream[\r\n]/g);
   const streamCount = streamMatches ? streamMatches.length : 0;
 
-  // Common issue detection
   if (!version) {
     issues.push('Could not determine PDF version');
   }
@@ -358,28 +322,23 @@ export function extractRawText(data: Uint8Array | Buffer): string[] {
   const text = new TextDecoder().decode(bytes);
   const extractedTexts: string[] = [];
 
-  // Look for text in stream objects
   const streamRegex = /stream[\r\n]([\s\S]*?)[\r\n]?endstream/g;
   let match;
 
   while ((match = streamRegex.exec(text)) !== null) {
     const streamContent = match[1];
 
-    // Try to find readable text in stream
-    // Look for BT...ET (text blocks)
     const textBlockRegex = /BT[\s\S]*?ET/g;
     let textMatch;
 
     while ((textMatch = textBlockRegex.exec(streamContent)) !== null) {
       const textBlock = textMatch[0];
 
-      // Extract string content (inside parentheses)
       const stringRegex = /\(((?:[^()\\]|\\[\\nrtbf()])*)\)/g;
       let stringMatch;
 
       while ((stringMatch = stringRegex.exec(textBlock)) !== null) {
         let str = stringMatch[1];
-        // Unescape common PDF escapes
         str = str
           .replace(/\\n/g, '\n')
           .replace(/\\r/g, '\r')
@@ -392,7 +351,6 @@ export function extractRawText(data: Uint8Array | Buffer): string[] {
         }
       }
 
-      // Also try hex strings
       const hexRegex = /<([0-9A-Fa-f]+)>/g;
       let hexMatch;
 

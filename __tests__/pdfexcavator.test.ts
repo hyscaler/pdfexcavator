@@ -1,5 +1,5 @@
 /**
- * PDFLens Unit Tests
+ * PDFExcavator Unit Tests
  */
 
 import {

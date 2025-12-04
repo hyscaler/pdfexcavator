@@ -1,10 +1,10 @@
 /**
- * Basic PDFLens usage example
+ * Basic PDFExcavator usage example
  *
  * Run with: npx tsx examples/basic.ts path/to/your.pdf
  */
 
-import pdflens from '../src/index.js';
+import pdfexcavator from '../src/index.js';
 
 async function main() {
   const pdfPath = process.argv[2];
@@ -16,7 +16,7 @@ async function main() {
 
   console.log(`Opening: ${pdfPath}\n`);
 
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
 
   // === Metadata ===
   const metadata = await pdf.metadata;

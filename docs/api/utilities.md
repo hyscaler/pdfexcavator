@@ -23,7 +23,7 @@ import {
   filterWithinBBox,
   filterOverlapsBBox,
   filterOutsideBBox,
-} from 'pdflens';
+} from 'pdfexcavator';
 ```
 
 ### normalizeBBox(bbox)
@@ -162,7 +162,7 @@ import {
   getUniqueYPositions,
   clusterObjects,
   clusterObjectsByMean,
-} from 'pdflens';
+} from 'pdfexcavator';
 ```
 
 ### isHorizontalLine(line)
@@ -296,7 +296,7 @@ import {
   WHITESPACE,
   COMMON_WORDS,
   WORD_PATTERNS,
-} from 'pdflens';
+} from 'pdfexcavator';
 ```
 
 ### correctText(text, options?)
@@ -384,7 +384,7 @@ import {
   PDF_BASE_FONTS,
   FONT_SUBSTITUTION_MAP,
   STANDARD_FONT_METRICS,
-} from 'pdflens';
+} from 'pdfexcavator';
 ```
 
 ### findFontSubstitution(fontName)
@@ -427,7 +427,7 @@ import {
   getDefaultCMapConfig,
   isCJKFont,
   normalizeCJKText,
-} from 'pdflens';
+} from 'pdfexcavator';
 ```
 
 ### isCJKFont(fontName)

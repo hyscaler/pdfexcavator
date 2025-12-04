@@ -16,9 +16,9 @@ Scanned documents that have been processed with OCR. Have a text layer but may h
 ## Detecting Document Type
 
 ```typescript
-import pdflens from 'pdflens';
+import pdfexcavator from 'pdfexcavator';
 
-const pdf = await pdflens.open('document.pdf');
+const pdf = await pdfexcavator.open('document.pdf');
 const page = pdf.pages[0];
 
 // Check if page is scanned (image only)
@@ -52,7 +52,7 @@ const goodText = await page.extractTextRaw();
 
 ### Why This Happens
 
-OCR software places characters at exact visual positions. When PDFLens tries to sort by position, overlapping coordinates cause scrambling. `extractTextRaw()` preserves the original order.
+OCR software places characters at exact visual positions. When PDFExcavator tries to sort by position, overlapping coordinates cause scrambling. `extractTextRaw()` preserves the original order.
 
 ## Performing OCR
 
@@ -67,7 +67,7 @@ npm install tesseract.js
 ### Basic OCR
 
 ```typescript
-import { isTesseractAvailable } from 'pdflens';
+import { isTesseractAvailable } from 'pdfexcavator';
 
 // Check if OCR is available
 const available = await isTesseractAvailable();
@@ -103,7 +103,7 @@ Some PDFs have both digital and scanned pages:
 
 ```typescript
 async function extractMixedPDF(pdfPath) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const results = [];
 
   for (const page of pdf.pages) {
@@ -141,7 +141,7 @@ async function extractMixedPDF(pdfPath) {
 OCR often confuses similar characters:
 
 ```typescript
-import { correctText } from 'pdflens';
+import { correctText } from 'pdfexcavator';
 
 const ocrText = await page.extractTextRaw();
 
@@ -210,7 +210,7 @@ const method = needsOcr ? 'OCR' : 'extraction';
 ### 3. Clean Up OCR Results
 
 ```typescript
-import { autoCorrectText } from 'pdflens';
+import { autoCorrectText } from 'pdfexcavator';
 
 const raw = await page.extractTextRaw();
 const clean = autoCorrectText(raw);
@@ -232,7 +232,7 @@ try {
 ### 5. Clean Up Resources
 
 ```typescript
-import { terminateOCR } from 'pdflens';
+import { terminateOCR } from 'pdfexcavator';
 
 // After all OCR is complete
 await terminateOCR();

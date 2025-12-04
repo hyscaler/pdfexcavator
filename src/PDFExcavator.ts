@@ -1,5 +1,5 @@
 /**
- * PDFLens - Main document class
+ * PDFExcavator - Main document class
  * Optimized with lazy page loading
  */
 
@@ -9,7 +9,7 @@ import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.mjs';
 import type { PDFDocumentProxy } from 'pdfjs-dist';
 import { readFile } from 'fs/promises';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { dirname, join, resolve, normalize } from 'path';
 import { Page } from './Page.js';
 import type { OpenOptions, PDFMetadata, TextExtractionOptions, ProcessingOptions, ProcessingResult, ProcessingError } from './types.js';
 import {
@@ -42,10 +42,36 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = workerPath;
 // Cache CMap config
 let cachedCMapConfig: CMapConfig | null | undefined = undefined;
 
-export class PDFLens {
+/**
+ * Validate and normalize a file path to prevent path traversal attacks.
+ * Throws an error if the path contains suspicious patterns.
+ * @param inputPath The path to validate
+ * @param basePath Optional base path to restrict access to
+ * @returns The normalized absolute path
+ */
+function validatePath(inputPath: string, basePath?: string): string {
+  // Normalize the path to resolve . and ..
+  const normalizedPath = normalize(resolve(inputPath));
+
+  // If a base path is provided, ensure the resolved path is within it
+  if (basePath) {
+    const normalizedBase = normalize(resolve(basePath));
+    if (!normalizedPath.startsWith(normalizedBase)) {
+      throw new Error(`Path traversal detected: "${inputPath}" resolves outside of allowed directory`);
+    }
+  }
+
+  // Check for null bytes (path truncation attack)
+  if (inputPath.includes('\0')) {
+    throw new Error('Invalid path: null byte detected');
+  }
+
+  return normalizedPath;
+}
+
+export class PDFExcavator {
   private _document: PDFDocumentProxy;
   private _pages: Page[] = [];
-  private _pageProxies: Map<number, Page> = new Map();
   private _metadata: PDFMetadata | null = null;
   private _path: string | null;
   private _options: OpenOptions;
@@ -69,23 +95,25 @@ export class PDFLens {
    * @param path Path to PDF file
    * @param options Open options (including repair options)
    */
-  static async open(path: string, options: OpenOptions = {}): Promise<PDFLens> {
-    const data = await readFile(path);
-    return PDFLens.openFromData(data, options, path);
+  static async open(path: string, options: OpenOptions = {}): Promise<PDFExcavator> {
+    // Validate path to prevent path traversal attacks
+    const safePath = validatePath(path, options.basePath);
+    const data = await readFile(safePath);
+    return PDFExcavator.openFromData(data, options, safePath);
   }
 
   /**
    * Open a PDF from a Buffer
    */
-  static async fromBuffer(buffer: Buffer, options: OpenOptions = {}): Promise<PDFLens> {
-    return PDFLens.openFromData(buffer, options);
+  static async fromBuffer(buffer: Buffer, options: OpenOptions = {}): Promise<PDFExcavator> {
+    return PDFExcavator.openFromData(buffer, options);
   }
 
   /**
    * Open a PDF from a Uint8Array
    */
-  static async fromUint8Array(data: Uint8Array, options: OpenOptions = {}): Promise<PDFLens> {
-    return PDFLens.openFromData(data, options);
+  static async fromUint8Array(data: Uint8Array, options: OpenOptions = {}): Promise<PDFExcavator> {
+    return PDFExcavator.openFromData(data, options);
   }
 
   /**
@@ -95,7 +123,7 @@ export class PDFLens {
     data: Buffer | Uint8Array,
     options: OpenOptions,
     path: string | null = null
-  ): Promise<PDFLens> {
+  ): Promise<PDFExcavator> {
     let workingData: Uint8Array = data instanceof Buffer ? new Uint8Array(data) : data;
     let repairResult: RepairResult | null = null;
 
@@ -105,7 +133,7 @@ export class PDFLens {
     }
 
     // Try repair if enabled or if initial load fails
-    const tryWithRepair = async (attemptRepair: boolean): Promise<PDFLens> => {
+    const tryWithRepair = async (attemptRepair: boolean): Promise<PDFExcavator> => {
       if (attemptRepair) {
         repairResult = repairPDF(workingData, options.repairOptions);
         if (repairResult.repaired && repairResult.data) {
@@ -141,7 +169,7 @@ export class PDFLens {
 
       const document = await getDocument(pdfOptions).promise;
 
-      const instance = new PDFLens(document, options, path, repairResult);
+      const instance = new PDFExcavator(document, options, path, repairResult);
       await instance.loadPages();
       return instance;
     };
@@ -162,7 +190,9 @@ export class PDFLens {
 
       // Try with repair
       try {
-        console.warn(`PDF load failed, attempting repair: ${error.message}`);
+        if (options.verbose) {
+          console.warn(`PDF load failed, attempting repair: ${error.message}`);
+        }
         return await tryWithRepair(true);
       } catch (repairError: any) {
         // If repair also fails, throw with both errors
@@ -279,7 +309,7 @@ export class PDFLens {
     }
 
     const pdfMetadata = await this._document.getMetadata();
-    const info = pdfMetadata.info as Record<string, any>;
+    const info = (pdfMetadata.info ?? {}) as Record<string, any>;
 
     let creationDate: Date | undefined;
     let modificationDate: Date | undefined;
@@ -582,8 +612,8 @@ export class PDFLens {
 
 /**
  * Convenience function to open a PDF
- * Usage: const pdf = await pdflens.open('file.pdf')
+ * Usage: const pdf = await pdfexcavator.open('file.pdf')
  */
-export async function open(path: string, options: OpenOptions = {}): Promise<PDFLens> {
-  return PDFLens.open(path, options);
+export async function open(path: string, options: OpenOptions = {}): Promise<PDFExcavator> {
+  return PDFExcavator.open(path, options);
 }

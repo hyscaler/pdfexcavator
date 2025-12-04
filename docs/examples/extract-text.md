@@ -5,10 +5,10 @@ Code examples for extracting text from PDFs.
 ## Basic Text Extraction
 
 ```typescript
-import pdflens from 'pdflens';
+import pdfexcavator from 'pdfexcavator';
 
 async function extractAllText(pdfPath: string): Promise<string> {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const texts: string[] = [];
 
   for (const page of pdf.pages) {
@@ -29,7 +29,7 @@ console.log(text);
 
 ```typescript
 async function extractWithPageNumbers(pdfPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const result: { page: number; text: string }[] = [];
 
   for (const page of pdf.pages) {
@@ -48,7 +48,7 @@ async function extractWithPageNumbers(pdfPath: string) {
 
 ```typescript
 async function extractPages(pdfPath: string, pageNumbers: number[]) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const texts: string[] = [];
 
   for (const pageNum of pageNumbers) {
@@ -68,7 +68,7 @@ const texts = await extractPages('document.pdf', [1, 3, 5]);
 
 ```typescript
 async function extractWithLayout(pdfPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
 
   for (const page of pdf.pages) {
     // Preserves visual layout with spacing
@@ -84,7 +84,7 @@ async function extractWithLayout(pdfPath: string) {
 
 ```typescript
 async function extractWordsWithPositions(pdfPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const page = pdf.pages[0];
 
   const words = await page.extractWords();
@@ -105,7 +105,7 @@ async function extractWordsWithPositions(pdfPath: string) {
 
 ```typescript
 async function extractRegion(pdfPath: string, bbox: [number, number, number, number]) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const page = pdf.pages[0];
 
   // Crop to region [x0, y0, x1, y1]
@@ -124,7 +124,7 @@ const text = await extractRegion('document.pdf', [0, 0, 300, 400]);
 
 ```typescript
 async function extractLargeText(pdfPath: string, minSize: number = 14) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const page = pdf.pages[0];
 
   // Filter to only large text
@@ -143,7 +143,7 @@ const headers = await extractLargeText('document.pdf', 16);
 
 ```typescript
 async function extractOCRDocument(pdfPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const texts: string[] = [];
 
   for (const page of pdf.pages) {
@@ -161,7 +161,7 @@ async function extractOCRDocument(pdfPath: string) {
 
 ```typescript
 async function searchWithContext(pdfPath: string, query: string, contextChars = 50) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const results: { page: number; context: string }[] = [];
 
   for (const page of pdf.pages) {
@@ -191,7 +191,7 @@ async function searchWithContext(pdfPath: string, query: string, contextChars = 
 
 ```typescript
 async function extractToJSON(pdfPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const meta = await pdf.metadata;
 
   const result = {
@@ -235,7 +235,7 @@ async function batchExtract(directory: string) {
     const outputPath = path.join(directory, file.replace('.pdf', '.txt'));
 
     try {
-      const pdf = await pdflens.open(pdfPath);
+      const pdf = await pdfexcavator.open(pdfPath);
       const text = await pdf.extractText();
       fs.writeFileSync(outputPath, text);
       await pdf.close();
@@ -251,7 +251,7 @@ async function batchExtract(directory: string) {
 
 ```typescript
 async function extractWithProgress(pdfPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
 
   const result = await pdf.processPages(
     async (page) => {

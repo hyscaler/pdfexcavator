@@ -1,11 +1,11 @@
 # Getting Started
 
-This guide will help you get up and running with PDFLens quickly.
+This guide will help you get up and running with PDFExcavator quickly.
 
 ## Installation
 
 ```bash
-npm install pdflens
+npm install pdfexcavator
 ```
 
 ### Optional Dependencies
@@ -30,26 +30,26 @@ npm install tesseract.js
 ### Opening a PDF
 
 ```typescript
-import pdflens from 'pdflens';
+import pdfexcavator from 'pdfexcavator';
 
 // From file path
-const pdf = await pdflens.open('document.pdf');
+const pdf = await pdfexcavator.open('document.pdf');
 
 // With password (encrypted PDFs)
-const pdf = await pdflens.open('encrypted.pdf', { password: 'secret' });
+const pdf = await pdfexcavator.open('encrypted.pdf', { password: 'secret' });
 
 // From Buffer
-import { PDFLens } from 'pdflens';
+import { PDFExcavator } from 'pdfexcavator';
 import fs from 'fs';
 
 const buffer = fs.readFileSync('document.pdf');
-const pdf = await PDFLens.fromBuffer(buffer);
+const pdf = await PDFExcavator.fromBuffer(buffer);
 ```
 
 ### Basic Information
 
 ```typescript
-const pdf = await pdflens.open('document.pdf');
+const pdf = await pdfexcavator.open('document.pdf');
 
 console.log('Page count:', pdf.pageCount);
 
@@ -101,12 +101,12 @@ await pdf.close();
 
 ## CommonJS Usage
 
-PDFLens is an ESM-only package. To use it in CommonJS projects, use dynamic import:
+PDFExcavator is an ESM-only package. To use it in CommonJS projects, use dynamic import:
 
 ```javascript
 async function main() {
-  const { default: pdflens } = await import('pdflens');
-  const pdf = await pdflens.open('document.pdf');
+  const { default: pdfexcavator } = await import('pdfexcavator');
+  const pdf = await pdfexcavator.open('document.pdf');
   // ... work with PDF
   await pdf.close();
 }
@@ -120,20 +120,38 @@ Alternatively, rename your file to `.mjs` or set `"type": "module"` in your `pac
 
 ```bash
 # Install globally
-npm install -g pdflens
+npm install -g pdfexcavator
 
 # Extract text
-pdflens text document.pdf
+pdfexcavator text document.pdf
 
 # Extract tables
-pdflens tables document.pdf
+pdfexcavator tables document.pdf
 
 # Get help
-pdflens --help
+pdfexcavator --help
+```
+
+## Security Considerations
+
+When processing user-uploaded PDFs, use the `basePath` option to prevent path traversal attacks:
+
+```typescript
+// Restrict file access to uploads directory
+const pdf = await pdfexcavator.open(userProvidedPath, {
+  basePath: '/app/uploads'
+});
+```
+
+The `search()` method is safe by default - string patterns are escaped to prevent ReDoS attacks:
+
+```typescript
+// Safe - user input is escaped
+const results = await page.search(userInput);
 ```
 
 ## Next Steps
 
-- [API Reference](./api/pdflens.md) - Detailed API documentation
+- [API Reference](./api/pdfexcavator.md) - Detailed API documentation
 - [Basic Usage Guide](./guides/basic-usage.md) - Common patterns
 - [Examples](./examples/extract-text.md) - Code examples

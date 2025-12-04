@@ -40,7 +40,7 @@ if (table) {
 Class for advanced table detection.
 
 ```typescript
-import { TableFinder } from 'pdflens';
+import { TableFinder } from 'pdfexcavator';
 
 const chars = await page.chars;
 const lines = await page.getLines();
@@ -59,7 +59,7 @@ console.log(result.tables);
 Find tables in page content with debug information.
 
 ```typescript
-import { findTables } from 'pdflens';
+import { findTables } from 'pdfexcavator';
 
 const result = findTables(chars, lines, rects, 0, {
   snapTolerance: 3,
@@ -77,7 +77,7 @@ console.log(result.intersections); // Edge intersections
 Extract tables with page number.
 
 ```typescript
-import { extractTables } from 'pdflens';
+import { extractTables } from 'pdfexcavator';
 
 const tables = extractTables(chars, lines, rects, 0, options);
 ```
@@ -87,7 +87,7 @@ const tables = extractTables(chars, lines, rects, 0, options);
 Enhanced extraction with nested table support.
 
 ```typescript
-import { extractTablesEnhanced } from 'pdflens';
+import { extractTablesEnhanced } from 'pdfexcavator';
 
 const tables = extractTablesEnhanced(
   chars, lines, rects, 0,
@@ -107,7 +107,7 @@ for (const table of tables) {
 Detect tables without visible borders.
 
 ```typescript
-import { detectBorderlessTables } from 'pdflens';
+import { detectBorderlessTables } from 'pdfexcavator';
 
 const tables = detectBorderlessTables(chars, 0, {
   minRows: 2,
@@ -121,7 +121,7 @@ const tables = detectBorderlessTables(chars, 0, {
 Find tables within table cells.
 
 ```typescript
-import { findNestedTables } from 'pdflens';
+import { findNestedTables } from 'pdfexcavator';
 
 const tableWithNested = findNestedTables(
   parentTable,
@@ -135,7 +135,7 @@ const tableWithNested = findNestedTables(
 Debug table detection.
 
 ```typescript
-import { debugTableFinder } from 'pdflens';
+import { debugTableFinder } from 'pdfexcavator';
 
 const debug = debugTableFinder(chars, lines, rects);
 console.log('Edges:', debug.edges.length);
@@ -229,11 +229,11 @@ tables.sort((a, b) => (b.confidence ?? 0) - (a.confidence ?? 0));
 ## Example: Export to CSV
 
 ```typescript
-import pdflens from 'pdflens';
+import pdfexcavator from 'pdfexcavator';
 import fs from 'fs';
 
 async function tablesToCSV(pdfPath: string, outputPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   let csv = '';
 
   for (const page of pdf.pages) {

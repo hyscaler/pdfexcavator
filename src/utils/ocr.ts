@@ -97,6 +97,22 @@ let tesseractModule: any = null;
 let tesseractWorkerPool: TesseractWorker[] = [];
 let tesseractInitialized = false;
 
+/** Keys that should never be copied to prevent prototype pollution */
+const DANGEROUS_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+
+/**
+ * Safe object merge that prevents prototype pollution
+ */
+function safeMerge<T extends Record<string, unknown>>(target: T, source: Record<string, unknown> | undefined): T {
+  if (!source) return target;
+  for (const key of Object.keys(source)) {
+    if (!DANGEROUS_KEYS.has(key) && Object.prototype.hasOwnProperty.call(source, key)) {
+      (target as Record<string, unknown>)[key] = source[key];
+    }
+  }
+  return target;
+}
+
 /**
  * Dynamically import tesseract.js
  * This allows the library to work even if tesseract.js is not installed
@@ -104,10 +120,13 @@ let tesseractInitialized = false;
 async function loadTesseract(): Promise<any> {
   if (tesseractModule) return tesseractModule;
 
-  // Use dynamic import with a variable to avoid TypeScript compile errors
-  const moduleName = 'tesseract.js';
-  tesseractModule = await (Function('moduleName', 'return import(moduleName)')(moduleName));
-  return tesseractModule;
+  try {
+    // Dynamic import of optional dependency
+    tesseractModule = await import(/* webpackIgnore: true */ 'tesseract.js');
+    return tesseractModule;
+  } catch {
+    throw new Error('Tesseract.js is not installed. Install it with: npm install tesseract.js');
+  }
 }
 
 /**
@@ -155,7 +174,8 @@ async function initTesseract(options: OCROptions = {}): Promise<TesseractWorker>
     params['tessedit_pageseg_mode'] = options.psm.toString();
   }
   if (options.tesseractParams) {
-    Object.assign(params, options.tesseractParams);
+    // Use safeMerge to prevent prototype pollution
+    safeMerge(params, options.tesseractParams as Record<string, unknown>);
   }
 
   if (Object.keys(params).length > 0) {
@@ -223,7 +243,7 @@ export async function performOCR(
   try {
     const result = await worker.recognize(imageBuffer);
 
-    // Convert Tesseract results to PDFLens format
+    // Convert Tesseract results to PDFExcavator format
     const chars: PDFChar[] = [];
     const words: PDFWord[] = [];
     const lines: PDFTextLine[] = [];

@@ -53,7 +53,7 @@ Best for:
 Tables without visible lines:
 
 ```typescript
-import { detectBorderlessTables } from 'pdflens';
+import { detectBorderlessTables } from 'pdfexcavator';
 
 const chars = await page.chars;
 const tables = detectBorderlessTables(chars, page.pageNumber, {
@@ -104,7 +104,7 @@ const tables = await page.extractTables({
 Tables within table cells:
 
 ```typescript
-import { extractTablesEnhanced } from 'pdflens';
+import { extractTablesEnhanced } from 'pdfexcavator';
 
 const chars = await page.chars;
 const lines = await page.getLines();
@@ -262,7 +262,7 @@ image.save('debug-tables.png');
 ### Debug Table Finder
 
 ```typescript
-import { debugTableFinder } from 'pdflens';
+import { debugTableFinder } from 'pdfexcavator';
 
 const chars = await page.chars;
 const lines = await page.getLines();

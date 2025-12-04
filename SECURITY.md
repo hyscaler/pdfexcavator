@@ -8,7 +8,7 @@
 
 ## Reporting a Vulnerability
 
-We take security issues seriously. If you discover a security vulnerability in PDFLens, please report it responsibly.
+We take security issues seriously. If you discover a security vulnerability in PDFExcavator, please report it responsibly.
 
 ### How to Report
 
@@ -31,7 +31,7 @@ We take security issues seriously. If you discover a security vulnerability in P
 ### Scope
 
 This security policy applies to:
-- The PDFLens npm package
+- The PDFExcavator npm package
 - The official GitHub repository
 
 ### Out of Scope
@@ -42,20 +42,20 @@ This security policy applies to:
 
 ## Security Best Practices
 
-When using PDFLens:
+When using PDFExcavator:
 
 1. **Validate PDF sources** - Only process PDFs from trusted sources
 2. **Sandbox processing** - Consider running PDF processing in isolated environments
-3. **Keep updated** - Use the latest version of PDFLens
+3. **Keep updated** - Use the latest version of PDFExcavator
 4. **Review dependencies** - Regularly audit your dependency tree
 
 ## Dependencies
 
-PDFLens relies on:
+PDFExcavator relies on:
 - **pdfjs-dist** (Mozilla's pdf.js) - Well-maintained, security-conscious library
 - **tesseract.js** (optional) - For OCR functionality
 - **canvas** (optional) - For image rendering
 
 We monitor these dependencies for security updates.
 
-Thank you for helping keep PDFLens secure!
+Thank you for helping keep PDFExcavator secure!

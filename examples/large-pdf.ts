@@ -5,7 +5,7 @@
  * Run with: npx tsx examples/large-pdf.ts path/to/large.pdf
  */
 
-import pdflens from '../src/index.js';
+import pdfexcavator from '../src/index.js';
 
 async function main() {
   const pdfPath = process.argv[2];
@@ -27,7 +27,7 @@ async function main() {
   console.log(`Opening: ${pdfPath}`);
   console.log(`Concurrency: ${concurrency} pages at a time\n`);
 
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   console.log(`Total pages: ${pdf.pageCount}\n`);
 
   // === Example 1: Extract text with progress tracking ===

@@ -1,5 +1,5 @@
 /**
- * PDFLens Type Definitions
+ * PDFExcavator Type Definitions
  */
 
 /** Bounding box coordinates [x0, y0, x1, y1] */
@@ -421,6 +421,10 @@ export interface OpenOptions {
   enableCMap?: boolean;
   /** Enable font substitution for missing fonts (default: true) */
   enableFontSubstitution?: boolean;
+  /** Base path to restrict file access to (security: prevents path traversal) */
+  basePath?: string;
+  /** Enable verbose logging for debugging (default: false) */
+  verbose?: boolean;
 }
 
 /** Options for crop and bbox operations */

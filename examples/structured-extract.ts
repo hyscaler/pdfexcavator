@@ -5,7 +5,7 @@
  * Run with: npx tsx examples/structured-extract.ts path/to/your.pdf
  */
 
-import pdflens, { clusterObjects } from '../src/index.js';
+import pdfexcavator, { clusterObjects } from '../src/index.js';
 import type { PDFWord } from '../src/types.js';
 
 // =======================================================================
@@ -311,12 +311,12 @@ async function extractPdfData(pdfPath: string): Promise<ExtractedData> {
     page_count: 0,
     original_file_path: pdfPath,
     pages: [],
-    extraction_method: 'pdflens',
+    extraction_method: 'pdfexcavator',
     full_text: '',
   };
 
   try {
-    const pdf = await pdflens.open(pdfPath);
+    const pdf = await pdfexcavator.open(pdfPath);
     data.page_count = pdf.pageCount;
     const allPageTexts: string[] = [];
 

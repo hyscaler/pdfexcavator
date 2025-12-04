@@ -4,6 +4,29 @@
  */
 
 import type { BBox, DrawOptions, RenderOptions } from './types.js';
+import { resolve, normalize } from 'path';
+
+/**
+ * Validate file path to prevent path traversal attacks
+ */
+function validateSavePath(inputPath: string, basePath?: string): string {
+  // Check for null bytes (path truncation attack)
+  if (inputPath.includes('\0')) {
+    throw new Error('Invalid path: contains invalid characters');
+  }
+
+  const normalizedPath = normalize(resolve(inputPath));
+
+  // If a base path is provided, ensure the resolved path is within it
+  if (basePath) {
+    const normalizedBase = normalize(resolve(basePath));
+    if (!normalizedPath.startsWith(normalizedBase)) {
+      throw new Error('Path traversal detected: path resolves outside allowed directory');
+    }
+  }
+
+  return normalizedPath;
+}
 
 export interface DrawRectOptions extends DrawOptions {
   radius?: number;
@@ -312,21 +335,25 @@ export class PageImage {
   /** Save image to file */
   async save(
     path: string,
-    options: { format?: 'png' | 'jpeg'; quality?: number } = {}
+    options: { format?: 'png' | 'jpeg'; quality?: number; basePath?: string } = {}
   ): Promise<void> {
     if (!path) {
       throw new Error('Path is required to save image');
     }
+
+    // Validate path to prevent path traversal attacks
+    const safePath = validateSavePath(path, options.basePath);
 
     try {
       const { format = 'png' } = options;
       const buffer = this.toBuffer(format);
 
       const { writeFile } = await import('fs/promises');
-      await writeFile(path, buffer);
+      await writeFile(safePath, buffer);
     } catch (error) {
+      // Avoid leaking full path in error messages for security
       const message = error instanceof Error ? error.message : String(error);
-      throw new Error(`Failed to save image to "${path}": ${message}`);
+      throw new Error(`Failed to save image: ${message}`);
     }
   }
 
@@ -394,7 +421,7 @@ export class PageImage {
     const { promisify } = await import('util');
     const execAsync = promisify(exec);
 
-    const tempPath = join(tmpdir(), `pdflens-${Date.now()}.png`);
+    const tempPath = join(tmpdir(), `pdfexcavator-${Date.now()}.png`);
     await this.save(tempPath);
 
     // Open with default viewer based on platform

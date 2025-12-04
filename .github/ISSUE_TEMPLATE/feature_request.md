@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest an idea for PDFLens
+about: Suggest an idea for PDFExcavator
 title: '[FEATURE] '
 labels: enhancement
 assignees: ''
@@ -18,9 +18,9 @@ How would you like to use this feature?
 
 ```typescript
 // Example of how the API might look
-import pdflens from 'pdflens';
+import pdfexcavator from 'pdfexcavator';
 
-const pdf = await pdflens.open('document.pdf');
+const pdf = await pdfexcavator.open('document.pdf');
 // Your proposed feature usage...
 ```
 

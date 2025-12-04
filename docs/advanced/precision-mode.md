@@ -16,9 +16,9 @@ Precision mode provides exact character positioning by tracking all PDF graphics
 ## Basic Usage
 
 ```typescript
-import { extractCharsWithPrecision } from 'pdflens';
+import { extractCharsWithPrecision } from 'pdfexcavator';
 
-const pdf = await pdflens.open('document.pdf');
+const pdf = await pdfexcavator.open('document.pdf');
 const page = pdf.pages[0];
 const pdfPage = page._page;
 
@@ -52,7 +52,7 @@ const chars = await page.chars;
 ### With Colors
 
 ```typescript
-import { extractCharsWithColors } from 'pdflens';
+import { extractCharsWithColors } from 'pdfexcavator';
 
 const chars = await extractCharsWithColors(
   pdfPage, pageNumber, pageHeight, offset
@@ -67,7 +67,7 @@ for (const char of chars) {
 ### With Spacing
 
 ```typescript
-import { extractCharsWithSpacing } from 'pdflens';
+import { extractCharsWithSpacing } from 'pdfexcavator';
 
 const chars = await extractCharsWithSpacing(
   pdfPage, pageNumber, pageHeight, offset
@@ -79,7 +79,7 @@ const chars = await extractCharsWithSpacing(
 ### Full Precision
 
 ```typescript
-import { extractCharsWithPrecision } from 'pdflens';
+import { extractCharsWithPrecision } from 'pdfexcavator';
 
 const chars = await extractCharsWithPrecision(
   pdfPage, pageNumber, pageHeight, offset
@@ -93,7 +93,7 @@ const chars = await extractCharsWithPrecision(
 Direct access to PDF graphics state.
 
 ```typescript
-import { PDFStateTracker, createStateTracker } from 'pdflens';
+import { PDFStateTracker, createStateTracker } from 'pdfexcavator';
 
 // Create tracker
 const tracker = await createStateTracker(pdfPage, pageHeight);
@@ -148,7 +148,7 @@ interface GraphicsState {
 
 ```typescript
 async function extractRotatedText(pdfPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const page = pdf.pages[0];
 
   const chars = await extractCharsWithPrecision(
@@ -183,7 +183,7 @@ async function extractRotatedText(pdfPath: string) {
 
 ```typescript
 async function extractSubSuperscript(pdfPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const page = pdf.pages[0];
 
   const chars = await extractCharsWithPrecision(

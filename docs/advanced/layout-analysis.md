@@ -9,7 +9,7 @@ Layout analysis provides fine-grained control over how characters are grouped in
 ## Basic Usage
 
 ```typescript
-import { analyzeLayout, DEFAULT_LAPARAMS } from 'pdflens';
+import { analyzeLayout, DEFAULT_LAPARAMS } from 'pdfexcavator';
 
 const chars = await page.chars;
 const result = analyzeLayout(chars, {
@@ -126,7 +126,7 @@ Enable detection of vertical text.
 For more control, use the LayoutAnalyzer class directly.
 
 ```typescript
-import { LayoutAnalyzer } from 'pdflens';
+import { LayoutAnalyzer } from 'pdfexcavator';
 
 const analyzer = new LayoutAnalyzer({
   lineOverlap: 0.5,
@@ -149,7 +149,7 @@ const result = analyzer.analyze(chars);
 ## Text Direction Detection
 
 ```typescript
-import { detectReadingDirection, isVerticalText } from 'pdflens';
+import { detectReadingDirection, isVerticalText } from 'pdfexcavator';
 
 const chars = await page.chars;
 
@@ -164,7 +164,7 @@ const hasVertical = isVerticalText(chars);
 ## Column Detection
 
 ```typescript
-import { detectTextColumns } from 'pdflens';
+import { detectTextColumns } from 'pdfexcavator';
 
 const chars = await page.chars;
 const columns = detectTextColumns(chars);
@@ -177,7 +177,7 @@ const columns = detectTextColumns(chars);
 
 ```typescript
 async function extractDenseText(pdfPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const page = pdf.pages[0];
 
   // Tighter parameters for dense text
@@ -197,7 +197,7 @@ async function extractDenseText(pdfPath: string) {
 
 ```typescript
 async function extractTextBlocks(pdfPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const page = pdf.pages[0];
 
   const analyzer = new LayoutAnalyzer({
@@ -236,7 +236,7 @@ async function extractTextBlocks(pdfPath: string) {
 
 ```typescript
 async function extractMixedOrientations(pdfPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const page = pdf.pages[0];
   const chars = await page.chars;
 

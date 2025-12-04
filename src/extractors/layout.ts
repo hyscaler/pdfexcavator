@@ -59,13 +59,9 @@ export class LayoutAnalyzer {
   analyzeCharsToWords(chars: PDFChar[]): PDFWord[] {
     if (chars.length === 0) return [];
 
-    // Sort chars by position (top-to-bottom, left-to-right)
     const sortedChars = this.sortCharsByPosition(chars);
-
-    // Group into lines first
     const lines = this.groupCharsIntoLines(sortedChars);
 
-    // Split lines into words
     const words: PDFWord[] = [];
     for (const lineChars of lines) {
       words.push(...this.splitLineIntoWords(lineChars));
@@ -80,11 +76,9 @@ export class LayoutAnalyzer {
   analyzeCharsToLines(chars: PDFChar[]): PDFTextLine[] {
     if (chars.length === 0) return [];
 
-    // Sort and group into lines
     const sortedChars = this.sortCharsByPosition(chars);
     const lineGroups = this.groupCharsIntoLines(sortedChars);
 
-    // Convert to PDFTextLine format, filtering out null results
     return lineGroups
       .map((lineChars) => this.createLine(lineChars))
       .filter((line): line is PDFTextLine => line !== null);
@@ -96,7 +90,6 @@ export class LayoutAnalyzer {
   extractText(chars: PDFChar[]): string {
     const lines = this.analyzeCharsToLines(chars);
 
-    // If boxesFlow is null, use visual order
     if (this.params.boxesFlow === null) {
       return lines
         .sort((a, b) => {
@@ -108,7 +101,6 @@ export class LayoutAnalyzer {
         .join('\n');
     }
 
-    // Use flow-based ordering
     const textGroups = this.groupLinesIntoBlocks(lines);
     return textGroups
       .sort((a, b) => a.flowIndex - b.flowIndex)
@@ -123,21 +115,15 @@ export class LayoutAnalyzer {
     const sorted = [...chars];
 
     sorted.sort((a, b) => {
-      // Check if chars are on the same line
-      const aCenter = (a.y0 + a.y1) / 2;
-      const bCenter = (b.y0 + b.y1) / 2;
       const aHeight = a.y1 - a.y0;
       const bHeight = b.y1 - b.y0;
       const overlap = this.calculateOverlap(a.y0, a.y1, b.y0, b.y1);
       const minHeight = Math.min(aHeight, bHeight);
 
-      // If vertical overlap is significant, they're on the same line
       if (overlap / minHeight >= this.params.lineOverlap) {
-        // Same line - sort by x position
         return a.x0 - b.x0;
       }
 
-      // Different lines - sort by y position
       return a.y0 - b.y0;
     });
 
@@ -160,17 +146,14 @@ export class LayoutAnalyzer {
       const charHeight = char.y1 - char.y0;
       const lineHeight = lineY1 - lineY0;
 
-      // Check vertical overlap with current line
       const overlap = this.calculateOverlap(lineY0, lineY1, char.y0, char.y1);
       const minHeight = Math.min(charHeight, lineHeight);
 
       if (minHeight > 0 && overlap / minHeight >= this.params.lineOverlap) {
-        // Same line
         currentLine.push(char);
         lineY0 = Math.min(lineY0, char.y0);
         lineY1 = Math.max(lineY1, char.y1);
       } else {
-        // New line
         lines.push(currentLine);
         currentLine = [char];
         lineY0 = char.y0;
@@ -182,7 +165,6 @@ export class LayoutAnalyzer {
       lines.push(currentLine);
     }
 
-    // Sort each line by x position
     for (const line of lines) {
       line.sort((a, b) => a.x0 - b.x0);
     }
@@ -203,18 +185,15 @@ export class LayoutAnalyzer {
       const prevChar = lineChars[i - 1];
       const char = lineChars[i];
 
-      // Calculate gap between characters
       const gap = char.x0 - prevChar.x1;
       const avgCharWidth = (prevChar.width + char.width) / 2;
 
-      // Determine if this is a word break
       const isWordBreak =
         gap > avgCharWidth * this.params.charMargin ||
         (gap > avgCharWidth * this.params.wordMargin && prevChar.text === ' ') ||
         char.text === ' ';
 
       if (isWordBreak) {
-        // End current word (skip if it's just whitespace)
         const wordText = currentWordChars.map((c) => c.text).join('');
         if (wordText.trim()) {
           const word = this.createWord(currentWordChars);
@@ -226,7 +205,6 @@ export class LayoutAnalyzer {
       }
     }
 
-    // Add final word
     const wordText = currentWordChars.map((c) => c.text).join('');
     if (wordText.trim()) {
       const word = this.createWord(currentWordChars);
@@ -242,7 +220,6 @@ export class LayoutAnalyzer {
   private groupLinesIntoBlocks(lines: PDFTextLine[]): TextGroup[] {
     if (lines.length === 0) return [];
 
-    // Convert lines to boxes
     const boxes: LayoutBox[] = lines.map((line) => ({
       text: line.text,
       x0: line.x0,
@@ -253,7 +230,6 @@ export class LayoutAnalyzer {
       isVertical: false,
     }));
 
-    // Group boxes that are close together
     const groups: TextGroup[] = [];
     const assigned = new Set<number>();
 
@@ -270,7 +246,6 @@ export class LayoutAnalyzer {
       };
       assigned.add(i);
 
-      // Find all boxes that belong to this group
       let changed = true;
       while (changed) {
         changed = false;
@@ -280,7 +255,6 @@ export class LayoutAnalyzer {
           const box = boxes[j];
           const avgLineHeight = (group.y1 - group.y0) / group.boxes.length;
 
-          // Check if box is close enough to be part of this group
           const verticalGap = Math.min(
             Math.abs(box.y0 - group.y1),
             Math.abs(group.y0 - box.y1)
@@ -308,7 +282,6 @@ export class LayoutAnalyzer {
       groups.push(group);
     }
 
-    // Calculate flow index based on boxesFlow parameter
     this.calculateFlowIndex(groups);
 
     return groups;
@@ -321,11 +294,9 @@ export class LayoutAnalyzer {
     const boxesFlow = this.params.boxesFlow ?? 0.5;
 
     for (const group of groups) {
-      // Weight between horizontal (0) and vertical (1) position
       const horizontalScore = group.x0;
       const verticalScore = group.y0;
 
-      // Mix based on boxesFlow parameter
       group.flowIndex =
         horizontalScore * (1 - boxesFlow) + verticalScore * boxesFlow;
     }
@@ -446,15 +417,12 @@ export function isVerticalText(chars: PDFChar[]): boolean {
 export function detectReadingDirection(chars: PDFChar[]): 'ltr' | 'rtl' | 'ttb' | 'btt' {
   if (chars.length < 2) return 'ltr';
 
-  // Check if text is vertical
   if (isVerticalText(chars)) {
-    // Check vertical direction
     const firstY = chars[0].y0;
     const lastY = chars[chars.length - 1].y0;
     return lastY > firstY ? 'ttb' : 'btt';
   }
 
-  // Check horizontal direction
   const firstX = chars[0].x0;
   const lastX = chars[chars.length - 1].x0;
   return lastX > firstX ? 'ltr' : 'rtl';
@@ -469,13 +437,11 @@ export function detectTextColumns(
 ): Array<{ x0: number; x1: number }> {
   if (chars.length < 10) return [];
 
-  // Get page bounds
   const minX = Math.min(...chars.map((c) => c.x0));
   const maxX = Math.max(...chars.map((c) => c.x1));
   const pageWidth = maxX - minX;
   const minGap = pageWidth * minGapRatio;
 
-  // Create histogram of x positions
   const binSize = pageWidth / 100;
   const histogram = new Map<number, number>();
 
@@ -484,7 +450,6 @@ export function detectTextColumns(
     histogram.set(bin, (histogram.get(bin) || 0) + 1);
   }
 
-  // Find gaps (empty bins)
   const gaps: Array<{ start: number; end: number }> = [];
   let gapStart = -1;
 
@@ -507,7 +472,6 @@ export function detectTextColumns(
     }
   }
 
-  // Convert gaps to columns
   if (gaps.length === 0) {
     return [{ x0: minX, x1: maxX }];
   }

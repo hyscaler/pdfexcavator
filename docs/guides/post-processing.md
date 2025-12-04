@@ -35,7 +35,7 @@ function removeHeadersFooters(text) {
 ### Character Correction
 
 ```typescript
-import { correctText, autoCorrectText } from 'pdflens';
+import { correctText, autoCorrectText } from 'pdfexcavator';
 
 // Automatic correction
 const fixed = autoCorrectText(rawText);
@@ -53,7 +53,7 @@ const fixed = correctText(rawText, {
 ## Grouping into Lines
 
 ```typescript
-import { clusterObjects } from 'pdflens';
+import { clusterObjects } from 'pdfexcavator';
 
 const words = await page.extractWords();
 
@@ -205,10 +205,10 @@ function computeBBox(words) {
 ### Complete Example
 
 ```typescript
-import pdflens, { clusterObjects } from 'pdflens';
+import pdfexcavator, { clusterObjects } from 'pdfexcavator';
 
 async function extractStructured(pdfPath) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const result = {
     pages: []
   };

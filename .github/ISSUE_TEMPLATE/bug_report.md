@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Report a bug to help us improve PDFLens
+about: Report a bug to help us improve PDFExcavator
 title: '[BUG] '
 labels: bug
 assignees: ''
@@ -24,9 +24,9 @@ What actually happened.
 ## Code Sample
 ```typescript
 // Minimal code to reproduce the issue
-import pdflens from 'pdflens';
+import pdfexcavator from 'pdfexcavator';
 
-const pdf = await pdflens.open('document.pdf');
+const pdf = await pdfexcavator.open('document.pdf');
 // ...
 ```
 
@@ -34,7 +34,7 @@ const pdf = await pdflens.open('document.pdf');
 If possible, attach a sample PDF that demonstrates the issue (ensure it contains no sensitive data).
 
 ## Environment
-- **PDFLens version**: (e.g., 0.1.0)
+- **PDFExcavator version**: (e.g., 0.1.0)
 - **Node.js version**: (e.g., 18.0.0)
 - **Operating System**: (e.g., macOS 14, Ubuntu 22.04, Windows 11)
 - **TypeScript version** (if applicable):

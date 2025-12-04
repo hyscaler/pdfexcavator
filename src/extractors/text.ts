@@ -45,9 +45,7 @@ const DEFAULT_WORD_OPTIONS: Required<WordExtractionOptions> = {
  */
 function getRotationAngle(transform: number[]): number {
   const [scaleX, skewY, skewX, scaleY] = transform;
-  // Rotation angle in radians
   const angle = Math.atan2(skewY, scaleX);
-  // Convert to degrees
   return (angle * 180) / Math.PI;
 }
 
@@ -88,17 +86,13 @@ export function extractChars(
     const isVertical = isTransformVertical(transform);
     const rotationAngle = getRotationAngle(transform);
 
-    // PDF coordinates have origin at bottom-left, convert to top-left
     const flippedY = pageHeight - y;
-
-    // Calculate character dimensions
     const charCount = str.length || 1;
     const avgCharWidth = totalWidth / charCount;
 
     for (let i = 0; i < str.length; i++) {
       let charText = str[i];
 
-      // Apply unicode normalization if specified
       if (unicodeNorm && charText) {
         charText = charText.normalize(unicodeNorm);
       }
@@ -107,29 +101,23 @@ export function extractChars(
       let charWidth: number, charHeight: number;
 
       if (isVertical) {
-        // Vertical text - swap dimensions and adjust positioning
         charWidth = Math.abs(fontSize);
         charHeight = avgCharWidth * Math.abs(scaleY !== 0 ? scaleY : scaleX);
 
-        // For vertical text, characters stack vertically
         charX = x;
         charX1 = x + charWidth;
 
         if (rotationAngle > 0) {
-          // Rotated clockwise (90 degrees)
           charY0 = flippedY + i * charHeight;
           charY1 = charY0 + charHeight;
         } else {
-          // Rotated counter-clockwise (-90 degrees)
           charY0 = flippedY - (i + 1) * charHeight;
           charY1 = charY0 + charHeight;
         }
       } else {
-        // Normal horizontal text
         charWidth = avgCharWidth * Math.abs(scaleX);
         charHeight = Math.abs(fontSize);
 
-        // Handle rotated but not vertical text
         if (!isUpright) {
           const cos = Math.cos((rotationAngle * Math.PI) / 180);
           const sin = Math.sin((rotationAngle * Math.PI) / 180);
@@ -185,7 +173,6 @@ export async function extractCharsWithFontMetrics(
   doctopOffset: number = 0,
   unicodeNorm?: 'NFC' | 'NFD' | 'NFKC' | 'NFKD' | null
 ): Promise<PDFChar[]> {
-  // Extract font metrics for this page
   const fontMetrics = await extractFontMetrics(page, textContent);
   const chars: PDFChar[] = [];
 
@@ -205,13 +192,9 @@ export async function extractCharsWithFontMetrics(
     const isVertical = isTransformVertical(transform);
     const rotationAngle = getRotationAngle(transform);
 
-    // PDF coordinates have origin at bottom-left, convert to top-left
     const flippedY = pageHeight - y;
-
-    // Get font metrics for this font (now includes TextStyle info)
     const metrics = fontMetrics.get(fontName);
 
-    // Calculate individual character widths using font metrics
     const charWidths: number[] = [];
     let totalCalculatedWidth = 0;
 
@@ -221,21 +204,16 @@ export async function extractCharsWithFontMetrics(
       totalCalculatedWidth += charWidth;
     }
 
-    // Scale factor to match pdf.js total width (which is more accurate for final positioning)
     const scaleFactor = totalCalculatedWidth > 0 && totalWidth > 0
       ? totalWidth / totalCalculatedWidth
       : 1;
 
-    // Apply scale factor to individual widths
     const scaledWidths = charWidths.map(w => w * scaleFactor);
-
-    // Track cumulative x position
     let currentX = x;
 
     for (let i = 0; i < str.length; i++) {
       let charText = str[i];
 
-      // Apply unicode normalization if specified
       if (unicodeNorm && charText) {
         charText = charText.normalize(unicodeNorm);
       }
@@ -246,7 +224,6 @@ export async function extractCharsWithFontMetrics(
       let charX: number, charY0: number, charY1: number, charX1: number;
 
       if (isVertical) {
-        // Vertical text - swap dimensions and adjust positioning
         const vertCharWidth = charHeight;
         const vertCharHeight = charWidth;
 
@@ -282,11 +259,9 @@ export async function extractCharsWithFontMetrics(
           pageNumber,
         });
       } else if (!isUpright) {
-        // Handle rotated but not vertical text
         const cos = Math.cos((rotationAngle * Math.PI) / 180);
         const sin = Math.sin((rotationAngle * Math.PI) / 180);
 
-        // Calculate position based on cumulative width
         const offsetX = currentX - x;
         charX = x + offsetX * cos;
         const baseY = flippedY - offsetX * sin;
@@ -317,7 +292,6 @@ export async function extractCharsWithFontMetrics(
 
         currentX += scaledWidths[i];
       } else {
-        // Normal horizontal text with accurate widths
         charX = currentX;
         charY0 = flippedY - charHeight;
         charY1 = flippedY;
@@ -363,16 +337,12 @@ export function extractWords(
 
   if (chars.length === 0) return [];
 
-  // Add original index to each char for stable sorting
   const charsWithIndex = chars.map((c, idx) => ({ char: c, originalIndex: idx }));
 
-  // Sort chars by position (top to bottom, then by original order or x position)
   const sortedChars = charsWithIndex.sort((a, b) => {
     const yDiff = a.char.y0 - b.char.y0;
     if (Math.abs(yDiff) > opts.yTolerance) return yDiff;
 
-    // If useTextFlow is enabled, preserve original PDF order within each line
-    // This handles PDFs with character-level spacing/kerning that causes overlapping bboxes
     if (opts.useTextFlow) {
       return a.originalIndex - b.originalIndex;
     }
@@ -384,16 +354,12 @@ export function extractWords(
   let currentWordChars: PDFChar[] = [];
 
   const isWordBreak = (prev: PDFChar, curr: PDFChar): boolean => {
-    // Different line
     if (Math.abs(curr.y0 - prev.y0) > opts.yTolerance) return true;
 
-    // Gap between characters
     const gap = curr.x0 - prev.x1;
 
-    // Calculate tolerance - use xToleranceRatio if set (based on char size)
     let tolerance: number;
     if (opts.xToleranceRatio !== null && opts.xToleranceRatio !== undefined) {
-      // Use the average size of the two characters for tolerance calculation
       const avgSize = (prev.size + curr.size) / 2;
       tolerance = avgSize * opts.xToleranceRatio;
     } else {
@@ -402,15 +368,19 @@ export function extractWords(
 
     if (gap > tolerance) return true;
 
-    // Space character
     if (prev.text === ' ' || curr.text === ' ') return true;
 
-    // Punctuation split
     if (opts.splitAtPunctuation) {
-      const punctuation =
-        typeof opts.splitAtPunctuation === 'boolean'
-          ? /[.,;:!?()[\]{}'"]/
-          : new RegExp(`[${opts.splitAtPunctuation.join('')}]`);
+      let punctuation: RegExp;
+      if (typeof opts.splitAtPunctuation === 'boolean') {
+        punctuation = /[.,;:!?()[\]{}'"]/;
+      } else {
+        // Escape special regex characters to prevent injection
+        const escaped = opts.splitAtPunctuation
+          .map(char => char.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'))
+          .join('');
+        punctuation = new RegExp(`[${escaped}]`);
+      }
       if (punctuation.test(prev.text) || punctuation.test(curr.text)) return true;
     }
 
@@ -426,7 +396,6 @@ export function extractWords(
     const x1 = Math.max(...wordChars.map((c) => c.x1));
     const y1 = Math.max(...wordChars.map((c) => c.y1));
 
-    // Determine direction based on character order
     const firstChar = wordChars[0];
     const lastChar = wordChars[wordChars.length - 1];
     const direction = firstChar.x0 <= lastChar.x0 ? 'ltr' : 'rtl';
@@ -447,7 +416,6 @@ export function extractWords(
   };
 
   for (const char of sortedChars) {
-    // Skip blank characters if not keeping them
     if (!opts.keepBlankChars && char.text.trim() === '') {
       if (currentWordChars.length > 0) {
         const word = createWord(currentWordChars);
@@ -488,7 +456,6 @@ export function extractLines(
 ): PDFTextLine[] {
   if (chars.length === 0) return [];
 
-  // Sort by y then x
   const sortedChars = [...chars].sort((a, b) => {
     const yDiff = a.y0 - b.y0;
     if (Math.abs(yDiff) > yTolerance) return yDiff;

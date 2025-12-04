@@ -1,24 +1,24 @@
-# PDFLens Class
+# PDFExcavator Class
 
 The main class for opening and working with PDF documents.
 
 ## Import
 
 ```typescript
-import pdflens, { PDFLens } from 'pdflens';
+import pdfexcavator, { PDFExcavator } from 'pdfexcavator';
 ```
 
 ## Opening PDFs
 
-### pdflens.open(path, options?)
+### pdfexcavator.open(path, options?)
 
 Opens a PDF from a file path.
 
 ```typescript
-const pdf = await pdflens.open('document.pdf');
+const pdf = await pdfexcavator.open('document.pdf');
 
 // With options
-const pdf = await pdflens.open('encrypted.pdf', {
+const pdf = await pdfexcavator.open('encrypted.pdf', {
   password: 'secret',
   repair: true
 });
@@ -35,25 +35,30 @@ const pdf = await pdflens.open('encrypted.pdf', {
 |--------|------|---------|-------------|
 | password | `string` | - | Password for encrypted PDFs |
 | repair | `boolean` | `false` | Attempt to repair malformed PDFs |
+| basePath | `string` | - | Restrict file access to this directory (security) |
+| unicodeNorm | `string` | - | Unicode normalization: 'NFC', 'NFD', 'NFKC', 'NFKD' |
+| enableCMap | `boolean` | `true` | Enable CMap support for CJK characters |
+| enableFontSubstitution | `boolean` | `true` | Enable font substitution for missing fonts |
+| verbose | `boolean` | `false` | Enable verbose logging for debugging |
 
-### PDFLens.fromBuffer(buffer, options?)
+### PDFExcavator.fromBuffer(buffer, options?)
 
 Opens a PDF from a Buffer.
 
 ```typescript
-import { PDFLens } from 'pdflens';
+import { PDFExcavator } from 'pdfexcavator';
 import fs from 'fs';
 
 const buffer = fs.readFileSync('document.pdf');
-const pdf = await PDFLens.fromBuffer(buffer);
+const pdf = await PDFExcavator.fromBuffer(buffer);
 ```
 
-### PDFLens.fromUint8Array(data, options?)
+### PDFExcavator.fromUint8Array(data, options?)
 
 Opens a PDF from a Uint8Array.
 
 ```typescript
-const pdf = await PDFLens.fromUint8Array(uint8Array);
+const pdf = await PDFExcavator.fromUint8Array(uint8Array);
 ```
 
 ## Properties
@@ -114,18 +119,29 @@ Extract text from all pages.
 const allText = await pdf.extractText();
 ```
 
-### search(query)
+### search(pattern, options?)
 
 Search for text across all pages.
 
 ```typescript
+// String search (literal, safe from ReDoS)
 const results = await pdf.search('keyword');
+
+// Regex search (use with caution on user input)
 const regexResults = await pdf.search(/pattern/gi);
+
+// Enable regex mode for string (not recommended for user input)
+const unsafeResults = await pdf.search(userInput, { literal: false });
 
 for (const result of results) {
   console.log(`Found on page ${result.pageNumber}:`, result.matches);
 }
 ```
+
+**Options:**
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| literal | `boolean` | `true` | Treat string as literal text (prevents ReDoS) |
 
 ### processPages(processor, options?)
 
@@ -177,41 +193,41 @@ await pdf.close();
 
 ## Static Methods
 
-### PDFLens.isPDFLike(buffer)
+### PDFExcavator.isPDFLike(buffer)
 
 Check if data looks like a PDF.
 
 ```typescript
-const isPdf = PDFLens.isPDFLike(buffer); // true/false
+const isPdf = PDFExcavator.isPDFLike(buffer); // true/false
 ```
 
-### PDFLens.analyzePDF(buffer)
+### PDFExcavator.analyzePDF(buffer)
 
 Analyze PDF structure.
 
 ```typescript
-const analysis = PDFLens.analyzePDF(buffer);
+const analysis = PDFExcavator.analyzePDF(buffer);
 console.log(analysis.version);      // '1.7'
 console.log(analysis.encrypted);    // false
 console.log(analysis.objectCount);  // 150
 console.log(analysis.issues);       // ['Missing %%EOF marker']
 ```
 
-### PDFLens.extractRawText(buffer)
+### PDFExcavator.extractRawText(buffer)
 
 Extract raw text from severely damaged PDFs.
 
 ```typescript
-const texts = PDFLens.extractRawText(buffer);
+const texts = PDFExcavator.extractRawText(buffer);
 ```
 
 ## Example: Complete Workflow
 
 ```typescript
-import pdflens from 'pdflens';
+import pdfexcavator from 'pdfexcavator';
 
 async function processPDF(filePath: string) {
-  const pdf = await pdflens.open(filePath);
+  const pdf = await pdfexcavator.open(filePath);
 
   try {
     // Get metadata

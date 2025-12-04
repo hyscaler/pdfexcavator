@@ -1,12 +1,12 @@
 {
-  "name": "pdflens",
+  "name": "pdfexcavator",
   "version": "0.1.0",
   "description": "A powerful PDF extraction library for Node.js built on Mozilla's pdf.js - extract text, tables, and visual elements with precision",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "pdflens": "./dist/cli.js"
+    "pdfexcavator": "./dist/cli.js"
   },
   "exports": {
     ".": {
@@ -43,15 +43,15 @@
     "font",
     "typescript"
   ],
-  "author": "PDFLens Contributors",
+  "author": "PDFExcavator Contributors",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hyscaler/pdflens.git"
+    "url": "https://github.com/pdfexcavator/pdfexcavator.git"
   },
-  "homepage": "https://github.com/hyscaler/pdflens#readme",
+  "homepage": "https://github.com/pdfexcavator/pdfexcavator#readme",
   "bugs": {
-    "url": "https://github.com/hyscaler/pdflens/issues"
+    "url": "https://github.com/pdfexcavator/pdfexcavator/issues"
   },
   "engines": {
     "node": ">=18.0.0"

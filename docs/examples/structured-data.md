@@ -5,7 +5,7 @@ Extract structured data with paragraphs, sentences, and bounding boxes.
 ## Complete Structured Extraction
 
 ```typescript
-import pdflens, { clusterObjects } from 'pdflens';
+import pdfexcavator, { clusterObjects } from 'pdfexcavator';
 
 interface BBox {
   x0: number;
@@ -43,7 +43,7 @@ interface DocumentData {
 }
 
 async function extractStructuredDocument(pdfPath: string): Promise<DocumentData> {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const meta = await pdf.metadata;
 
   const result: DocumentData = {
@@ -280,7 +280,7 @@ interface Section {
 }
 
 async function extractSections(pdfPath: string): Promise<Section[]> {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const sections: Section[] = [];
 
   for (const page of pdf.pages) {
@@ -322,7 +322,7 @@ interface KeyValue {
 }
 
 async function extractKeyValuePairs(pdfPath: string): Promise<KeyValue[]> {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const pairs: KeyValue[] = [];
 
   for (const page of pdf.pages) {
@@ -365,7 +365,7 @@ interface AnnotatedText {
 }
 
 async function extractForAnnotation(pdfPath: string): Promise<AnnotatedText[]> {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const annotations: AnnotatedText[] = [];
 
   for (const page of pdf.pages) {

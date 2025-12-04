@@ -7,7 +7,7 @@ Tips and techniques for handling large PDFs efficiently.
 ### Flush Page Cache
 
 ```typescript
-const pdf = await pdflens.open('large-document.pdf');
+const pdf = await pdfexcavator.open('large-document.pdf');
 
 for (const page of pdf.pages) {
   const text = await page.extractText();
@@ -206,7 +206,7 @@ async function extractNonEmptyPages(pdf) {
 
 ```typescript
 async function* streamPages(pdfPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
 
   try {
     for (const page of pdf.pages) {
@@ -230,7 +230,7 @@ for await (const { page, text } of streamPages('document.pdf')) {
 ```typescript
 async function benchmark(pdfPath: string) {
   const start = Date.now();
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
 
   const pageTimings: number[] = [];
 
@@ -259,7 +259,7 @@ async function benchmark(pdfPath: string) {
 Always close when done:
 
 ```typescript
-const pdf = await pdflens.open('document.pdf');
+const pdf = await pdfexcavator.open('document.pdf');
 try {
   // ... process
 } finally {

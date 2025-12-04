@@ -6,7 +6,7 @@
  * Run with: npx tsx examples/visual-debug.ts path/to/your.pdf [output-dir]
  */
 
-import pdflens from '../src/index.js';
+import pdfexcavator from '../src/index.js';
 import { join } from 'path';
 
 async function main() {
@@ -20,7 +20,7 @@ async function main() {
 
   console.log(`Opening: ${pdfPath}\n`);
 
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const page = pdf.pages[0];
 
   // Render page to image

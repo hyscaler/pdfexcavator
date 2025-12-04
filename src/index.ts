@@ -1,14 +1,14 @@
 /**
- * PDFLens - A powerful PDF extraction library for Node.js
+ * PDFExcavator - A powerful PDF extraction library for Node.js
  *
- * PDFLens allows you to extract text,
+ * PDFExcavator allows you to extract text,
  * tables, and visual elements from PDF files with precision.
  *
  * @example
  * ```typescript
- * import pdflens from 'pdflens';
+ * import pdfexcavator from 'pdfexcavator';
  *
- * const pdf = await pdflens.open('document.pdf');
+ * const pdf = await pdfexcavator.open('document.pdf');
  * const metadata = await pdf.metadata;
  *
  * for (const page of pdf.pages) {
@@ -21,7 +21,7 @@
  */
 
 // Main classes
-export { PDFLens, open } from './PDFLens.js';
+export { PDFExcavator, open } from './PDFExcavator.js';
 export { Page } from './Page.js';
 export { PageImage, createPageImage } from './PageImage.js';
 
@@ -220,9 +220,9 @@ export {
 export type { CharCorrectionOptions } from './utils/charCorrection.js';
 
 // Default export for convenience
-import { PDFLens, open } from './PDFLens.js';
+import { PDFExcavator, open } from './PDFExcavator.js';
 
 export default {
-  PDFLens,
+  PDFExcavator,
   open,
 };

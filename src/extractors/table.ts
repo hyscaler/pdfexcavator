@@ -111,9 +111,8 @@ export class TableFinder {
     let count = 0;
 
     for (const char of this.chars) {
-      // Skip whitespace characters for better average
       if (char.text.trim() === '') continue;
-      if (char.width > 0 && char.width < 100) { // Filter outliers
+      if (char.width > 0 && char.width < 100) {
         totalWidth += char.width;
         count++;
       }
@@ -163,16 +162,9 @@ export class TableFinder {
    * Find all tables on the page
    */
   findTables(): TableFinderResult {
-    // Step 1: Collect edges based on strategy
     this.edges = this.collectEdges();
-
-    // Step 2: Join nearby edges
     this.edges = this.joinEdges(this.edges);
-
-    // Step 3: Find intersections
     this.intersections = this.findIntersections(this.edges);
-
-    // Step 4: Build tables from intersections
     const tables = this.buildTables();
 
     return {
@@ -188,7 +180,6 @@ export class TableFinder {
   private collectEdges(): Edge[] {
     const edges: Edge[] = [];
 
-    // Vertical edges
     if (this.options.verticalStrategy === 'explicit') {
       edges.push(...this.getExplicitVerticalEdges());
     } else if (
@@ -200,7 +191,6 @@ export class TableFinder {
       edges.push(...this.getTextVerticalEdges());
     }
 
-    // Horizontal edges
     if (this.options.horizontalStrategy === 'explicit') {
       edges.push(...this.getExplicitHorizontalEdges());
     } else if (
@@ -212,7 +202,6 @@ export class TableFinder {
       edges.push(...this.getTextHorizontalEdges());
     }
 
-    // Filter by minimum length
     return edges.filter((e) => this.edgeLength(e) >= this.options.edgeMinLength);
   }
 
@@ -223,7 +212,6 @@ export class TableFinder {
     const lines = this.options.explicitVerticalLines;
     if (!lines || lines.length === 0) return [];
 
-    // Get Y range from all content
     const allY = [
       ...this.chars.map((c) => [c.y0, c.y1]).flat(),
       ...this.lines.map((l) => [l.y0, l.y1]).flat(),
@@ -248,7 +236,6 @@ export class TableFinder {
     const lines = this.options.explicitHorizontalLines;
     if (!lines || lines.length === 0) return [];
 
-    // Get X range from all content
     const allX = [
       ...this.chars.map((c) => [c.x0, c.x1]).flat(),
       ...this.lines.map((l) => [l.x0, l.x1]).flat(),
@@ -273,7 +260,6 @@ export class TableFinder {
     const edges: Edge[] = [];
     const tolerance = this.options.snapTolerance;
 
-    // From lines
     for (const line of this.lines) {
       if (Math.abs(line.x0 - line.x1) <= tolerance) {
         edges.push({
@@ -286,10 +272,8 @@ export class TableFinder {
       }
     }
 
-    // From rectangles (left and right edges)
     for (const rect of this.rects) {
       if (rect.stroke || rect.fill) {
-        // Left edge
         edges.push({
           x0: rect.x0,
           y0: rect.y0,
@@ -297,7 +281,6 @@ export class TableFinder {
           y1: rect.y1,
           orientation: 'v',
         });
-        // Right edge
         edges.push({
           x0: rect.x1,
           y0: rect.y0,
@@ -318,7 +301,6 @@ export class TableFinder {
     const edges: Edge[] = [];
     const tolerance = this.options.snapTolerance;
 
-    // From lines
     for (const line of this.lines) {
       if (Math.abs(line.y0 - line.y1) <= tolerance) {
         edges.push({
@@ -331,10 +313,8 @@ export class TableFinder {
       }
     }
 
-    // From rectangles (top and bottom edges)
     for (const rect of this.rects) {
       if (rect.stroke || rect.fill) {
-        // Top edge
         edges.push({
           x0: rect.x0,
           y0: rect.y0,
@@ -342,7 +322,6 @@ export class TableFinder {
           y1: rect.y0,
           orientation: 'h',
         });
-        // Bottom edge
         edges.push({
           x0: rect.x0,
           y0: rect.y1,
@@ -372,16 +351,10 @@ export class TableFinder {
     const tolerance = this.options.snapTolerance;
     const edges: Edge[] = [];
 
-    // Method 1: Aligned text edges (original approach, improved)
     edges.push(...this.getAlignedTextEdges(words, tolerance, 'v'));
-
-    // Method 2: Whitespace gap detection
     edges.push(...this.getWhitespaceColumnEdges(words, tolerance));
-
-    // Method 3: Cell center clustering (for tables with consistent column widths)
     edges.push(...this.getCellCenterEdges(words, tolerance, 'v'));
 
-    // Deduplicate edges
     return this.deduplicateEdges(edges, tolerance);
   }
 

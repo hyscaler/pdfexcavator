@@ -5,7 +5,7 @@
  * Run with: npx tsx examples/extract-tables.ts path/to/your.pdf [output-dir]
  */
 
-import pdflens from '../src/index.js';
+import pdfexcavator from '../src/index.js';
 import { writeFile } from 'fs/promises';
 import { join } from 'path';
 
@@ -20,7 +20,7 @@ async function main() {
 
   console.log(`Opening: ${pdfPath}\n`);
 
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   let tableCount = 0;
 
   for (const page of pdf.pages) {

@@ -1,6 +1,6 @@
 # OCR Integration API
 
-PDFLens integrates with Tesseract.js for OCR support on scanned documents.
+PDFExcavator integrates with Tesseract.js for OCR support on scanned documents.
 
 ## Installation
 
@@ -62,7 +62,7 @@ const text = await page.extractTextWithOCR();
 Check if Tesseract.js is installed.
 
 ```typescript
-import { isTesseractAvailable } from 'pdflens';
+import { isTesseractAvailable } from 'pdfexcavator';
 
 const available = await isTesseractAvailable();
 if (!available) {
@@ -75,7 +75,7 @@ if (!available) {
 Perform OCR on an image buffer.
 
 ```typescript
-import { performOCR } from 'pdflens';
+import { performOCR } from 'pdfexcavator';
 
 const result = await performOCR(
   imageBuffer,
@@ -94,7 +94,7 @@ const result = await performOCR(
 Check if content needs OCR based on character and image metrics.
 
 ```typescript
-import { needsOCR } from 'pdflens';
+import { needsOCR } from 'pdfexcavator';
 
 const chars = await page.chars;
 const images = await page.getImages();
@@ -110,7 +110,7 @@ const needs = needsOCR(chars.length, images.length, pageArea, imageArea);
 Check if a page is likely a scanned document.
 
 ```typescript
-import { isLikelyScanned } from 'pdflens';
+import { isLikelyScanned } from 'pdfexcavator';
 
 const chars = await page.chars;
 const images = await page.getImages();
@@ -124,7 +124,7 @@ const isScanned = isLikelyScanned(chars.length, images, width, height);
 Clean up Tesseract workers.
 
 ```typescript
-import { terminateOCR } from 'pdflens';
+import { terminateOCR } from 'pdfexcavator';
 
 // When done with OCR
 await terminateOCR();
@@ -135,7 +135,7 @@ await terminateOCR();
 Advanced OCR control.
 
 ```typescript
-import { OCREngine } from 'pdflens';
+import { OCREngine } from 'pdfexcavator';
 
 const engine = new OCREngine({
   lang: 'eng+jpn',
@@ -186,7 +186,7 @@ interface OCRResult {
 Common language codes:
 
 ```typescript
-import { OCR_LANGUAGES } from 'pdflens';
+import { OCR_LANGUAGES } from 'pdfexcavator';
 
 console.log(OCR_LANGUAGES);
 // {
@@ -213,7 +213,7 @@ const result = await page.performOCR({ lang: 'eng+fra+deu' });
 ## Page Segmentation Modes (PSM)
 
 ```typescript
-import { PSM_MODES } from 'pdflens';
+import { PSM_MODES } from 'pdfexcavator';
 
 // PSM_MODES values:
 // 0  - Orientation and script detection only
@@ -238,7 +238,7 @@ const result = await page.performOCR({
 ## OCR Engine Modes (OEM)
 
 ```typescript
-import { OEM_MODES } from 'pdflens';
+import { OEM_MODES } from 'pdfexcavator';
 
 // OEM_MODES values:
 // 0 - Legacy engine only
@@ -254,7 +254,7 @@ const result = await page.performOCR({
 ## Example: Process Scanned PDF
 
 ```typescript
-import pdflens, { isTesseractAvailable, terminateOCR } from 'pdflens';
+import pdfexcavator, { isTesseractAvailable, terminateOCR } from 'pdfexcavator';
 
 async function processScannedPDF(pdfPath: string) {
   // Check OCR availability
@@ -263,7 +263,7 @@ async function processScannedPDF(pdfPath: string) {
     throw new Error('Install tesseract.js: npm install tesseract.js');
   }
 
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const results: string[] = [];
 
   for (const page of pdf.pages) {

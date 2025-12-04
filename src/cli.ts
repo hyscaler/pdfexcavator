@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
- * PDFLens CLI
+ * PDFExcavator CLI
  * Command-line interface for PDF extraction
  */
 
-import { PDFLens } from './PDFLens.js';
+import { PDFExcavator } from './PDFExcavator.js';
 
 interface CLIOptions {
   format: 'json' | 'csv' | 'text';
@@ -17,11 +17,11 @@ interface CLIOptions {
 }
 
 const HELP_TEXT = `
-pdflens - Extract text, tables, and data from PDF files
+pdfexcavator - Extract text, tables, and data from PDF files
 
 Usage:
-  pdflens <pdf-file> [options]           # Extract all objects
-  pdflens <command> [options] <pdf-file> # Run specific command
+  pdfexcavator <pdf-file> [options]           # Extract all objects
+  pdfexcavator <command> [options] <pdf-file> # Run specific command
 
 Commands:
   text      Extract text from PDF
@@ -48,13 +48,13 @@ Options:
   -v, --version           Show version
 
 Examples:
-  pdflens document.pdf                        # Extract all objects as CSV
-  pdflens document.pdf -f json                # Output as JSON
-  pdflens document.pdf -t char,line           # Only chars and lines
-  pdflens text document.pdf                   # Extract text only
-  pdflens tables document.pdf --format csv    # Tables as CSV
-  pdflens chars document.pdf --pages 1-3      # Chars from pages 1-3
-  pdflens metadata document.pdf               # Show metadata
+  pdfexcavator document.pdf                        # Extract all objects as CSV
+  pdfexcavator document.pdf -f json                # Output as JSON
+  pdfexcavator document.pdf -t char,line           # Only chars and lines
+  pdfexcavator text document.pdf                   # Extract text only
+  pdfexcavator tables document.pdf --format csv    # Tables as CSV
+  pdfexcavator chars document.pdf --pages 1-3      # Chars from pages 1-3
+  pdfexcavator metadata document.pdf               # Show metadata
 `;
 
 const COMMANDS = ['text', 'tables', 'chars', 'words', 'lines', 'rects', 'curves', 'images', 'annots', 'metadata', 'info'];
@@ -68,7 +68,7 @@ async function main() {
   }
 
   if (args.includes('-v') || args.includes('--version')) {
-    console.log('pdflens 0.1.0');
+    console.log('pdfexcavator 0.1.0');
     process.exit(0);
   }
 
@@ -115,7 +115,7 @@ async function main() {
   }
 
   try {
-    const pdf = await PDFLens.open(pdfPath, {
+    const pdf = await PDFExcavator.open(pdfPath, {
       password: options.password,
       laparams: options.laparams,
     });
@@ -240,7 +240,7 @@ function parsePageRange(range: string): number[] {
   return pages;
 }
 
-async function extractText(pdf: PDFLens, pages: number[], options: CLIOptions) {
+async function extractText(pdf: PDFExcavator, pages: number[], options: CLIOptions) {
   const results: string[] = [];
 
   for (const pageNum of pages) {
@@ -256,7 +256,7 @@ async function extractText(pdf: PDFLens, pages: number[], options: CLIOptions) {
   }
 }
 
-async function extractTables(pdf: PDFLens, pages: number[], options: CLIOptions) {
+async function extractTables(pdf: PDFExcavator, pages: number[], options: CLIOptions) {
   const allTables: any[] = [];
 
   for (const pageNum of pages) {
@@ -293,7 +293,7 @@ async function extractTables(pdf: PDFLens, pages: number[], options: CLIOptions)
   }
 }
 
-async function extractChars(pdf: PDFLens, pages: number[], options: CLIOptions) {
+async function extractChars(pdf: PDFExcavator, pages: number[], options: CLIOptions) {
   const allChars: any[] = [];
 
   for (const pageNum of pages) {
@@ -335,7 +335,7 @@ async function extractChars(pdf: PDFLens, pages: number[], options: CLIOptions) 
   }
 }
 
-async function extractWords(pdf: PDFLens, pages: number[], options: CLIOptions) {
+async function extractWords(pdf: PDFExcavator, pages: number[], options: CLIOptions) {
   const allWords: any[] = [];
 
   for (const pageNum of pages) {
@@ -366,7 +366,7 @@ async function extractWords(pdf: PDFLens, pages: number[], options: CLIOptions) 
   }
 }
 
-async function extractLines(pdf: PDFLens, pages: number[], options: CLIOptions) {
+async function extractLines(pdf: PDFExcavator, pages: number[], options: CLIOptions) {
   const allLines: any[] = [];
 
   for (const pageNum of pages) {
@@ -396,7 +396,7 @@ async function extractLines(pdf: PDFLens, pages: number[], options: CLIOptions) 
   }
 }
 
-async function extractRects(pdf: PDFLens, pages: number[], options: CLIOptions) {
+async function extractRects(pdf: PDFExcavator, pages: number[], options: CLIOptions) {
   const allRects: any[] = [];
 
   for (const pageNum of pages) {
@@ -430,7 +430,7 @@ async function extractRects(pdf: PDFLens, pages: number[], options: CLIOptions) 
   }
 }
 
-async function extractCurves(pdf: PDFLens, pages: number[], options: CLIOptions) {
+async function extractCurves(pdf: PDFExcavator, pages: number[], options: CLIOptions) {
   const allCurves: any[] = [];
 
   for (const pageNum of pages) {
@@ -461,7 +461,7 @@ async function extractCurves(pdf: PDFLens, pages: number[], options: CLIOptions)
   }
 }
 
-async function extractImages(pdf: PDFLens, pages: number[], options: CLIOptions) {
+async function extractImages(pdf: PDFExcavator, pages: number[], options: CLIOptions) {
   const allImages: any[] = [];
 
   for (const pageNum of pages) {
@@ -494,7 +494,7 @@ async function extractImages(pdf: PDFLens, pages: number[], options: CLIOptions)
   }
 }
 
-async function extractAnnots(pdf: PDFLens, pages: number[], options: CLIOptions) {
+async function extractAnnots(pdf: PDFExcavator, pages: number[], options: CLIOptions) {
   const allAnnots: any[] = [];
 
   for (const pageNum of pages) {
@@ -525,7 +525,7 @@ async function extractAnnots(pdf: PDFLens, pages: number[], options: CLIOptions)
   }
 }
 
-async function extractAll(pdf: PDFLens, pages: number[], options: CLIOptions) {
+async function extractAll(pdf: PDFExcavator, pages: number[], options: CLIOptions) {
   const allObjects: any[] = [];
   const types = options.types;
 
@@ -661,7 +661,7 @@ async function extractAll(pdf: PDFLens, pages: number[], options: CLIOptions) {
   }
 }
 
-async function showMetadata(pdf: PDFLens, options: CLIOptions) {
+async function showMetadata(pdf: PDFExcavator, options: CLIOptions) {
   const metadata = await pdf.getMetadata();
 
   if (options.format === 'json') {
@@ -680,7 +680,7 @@ async function showMetadata(pdf: PDFLens, options: CLIOptions) {
   }
 }
 
-async function showInfo(pdf: PDFLens, pages: number[], options: CLIOptions) {
+async function showInfo(pdf: PDFExcavator, pages: number[], options: CLIOptions) {
   const info: any[] = [];
 
   for (const pageNum of pages) {

@@ -1,15 +1,15 @@
 # Basic Usage Guide
 
-Common patterns and use cases for PDFLens.
+Common patterns and use cases for PDFExcavator.
 
 ## Opening PDFs
 
 ### From File Path
 
 ```typescript
-import pdflens from 'pdflens';
+import pdfexcavator from 'pdfexcavator';
 
-const pdf = await pdflens.open('document.pdf');
+const pdf = await pdfexcavator.open('document.pdf');
 // ... work with PDF
 await pdf.close();
 ```
@@ -17,11 +17,11 @@ await pdf.close();
 ### From Buffer
 
 ```typescript
-import { PDFLens } from 'pdflens';
+import { PDFExcavator } from 'pdfexcavator';
 import fs from 'fs';
 
 const buffer = fs.readFileSync('document.pdf');
-const pdf = await PDFLens.fromBuffer(buffer);
+const pdf = await PDFExcavator.fromBuffer(buffer);
 ```
 
 ### From URL (fetch first)
@@ -29,13 +29,13 @@ const pdf = await PDFLens.fromBuffer(buffer);
 ```typescript
 const response = await fetch('https://example.com/document.pdf');
 const buffer = Buffer.from(await response.arrayBuffer());
-const pdf = await PDFLens.fromBuffer(buffer);
+const pdf = await PDFExcavator.fromBuffer(buffer);
 ```
 
 ### Encrypted PDFs
 
 ```typescript
-const pdf = await pdflens.open('encrypted.pdf', {
+const pdf = await pdfexcavator.open('encrypted.pdf', {
   password: 'secret123'
 });
 ```
@@ -45,7 +45,7 @@ const pdf = await pdflens.open('encrypted.pdf', {
 ### Basic Text Extraction
 
 ```typescript
-const pdf = await pdflens.open('document.pdf');
+const pdf = await pdfexcavator.open('document.pdf');
 
 for (const page of pdf.pages) {
   const text = await page.extractText();
@@ -116,7 +116,7 @@ const data = tableToObjects(tables[0]);
 ## Getting Metadata
 
 ```typescript
-const pdf = await pdflens.open('document.pdf');
+const pdf = await pdfexcavator.open('document.pdf');
 const meta = await pdf.metadata;
 
 console.log('Title:', meta.title);
@@ -214,11 +214,11 @@ const result = await pdf.processPagesSequential(async (page) => {
 ## Error Handling
 
 ```typescript
-import pdflens from 'pdflens';
+import pdfexcavator from 'pdfexcavator';
 
 async function safePDFOpen(path) {
   try {
-    const pdf = await pdflens.open(path);
+    const pdf = await pdfexcavator.open(path);
     return pdf;
   } catch (error) {
     if (error.message.includes('password')) {
@@ -238,7 +238,7 @@ async function safePDFOpen(path) {
 ### Always Close PDFs
 
 ```typescript
-const pdf = await pdflens.open('document.pdf');
+const pdf = await pdfexcavator.open('document.pdf');
 try {
   // ... work with PDF
 } finally {

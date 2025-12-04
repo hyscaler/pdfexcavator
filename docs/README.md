@@ -1,4 +1,4 @@
-# PDFLens Documentation
+# PDFExcavator Documentation
 
 A powerful PDF extraction library for Node.js built on Mozilla's pdf.js.
 
@@ -8,7 +8,7 @@ A powerful PDF extraction library for Node.js built on Mozilla's pdf.js.
 - [Installation & Quick Start](./getting-started.md)
 
 ### API Reference
-- [PDFLens Class](./api/pdflens.md) - Opening and managing PDFs
+- [PDFExcavator Class](./api/pdfexcavator.md) - Opening and managing PDFs
 - [Page Class](./api/page.md) - Working with individual pages
 - [Text Extraction](./api/text-extraction.md) - Extracting text content
 - [Table Extraction](./api/table-extraction.md) - Extracting tables
@@ -49,15 +49,15 @@ A powerful PDF extraction library for Node.js built on Mozilla's pdf.js.
 ## Installation
 
 ```bash
-npm install pdflens
+npm install pdfexcavator
 ```
 
 ## Basic Example
 
 ```typescript
-import pdflens from 'pdflens';
+import pdfexcavator from 'pdfexcavator';
 
-const pdf = await pdflens.open('document.pdf');
+const pdf = await pdfexcavator.open('document.pdf');
 
 for (const page of pdf.pages) {
   const text = await page.extractText();
@@ -69,6 +69,6 @@ await pdf.close();
 
 ## Links
 
-- [GitHub Repository](https://github.com/hyscaler/pdflens)
-- [npm Package](https://www.npmjs.com/package/pdflens)
-- [Issue Tracker](https://github.com/hyscaler/pdflens/issues)
+- [GitHub Repository](https://github.com/nicobrinkkemper/pdfexcavator)
+- [npm Package](https://www.npmjs.com/package/pdfexcavator)
+- [Issue Tracker](https://github.com/nicobrinkkemper/pdfexcavator/issues)

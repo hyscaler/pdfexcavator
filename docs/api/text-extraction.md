@@ -27,7 +27,7 @@ const text = await page.extractTextRaw();
 Extract individual characters with full metadata.
 
 ```typescript
-import { extractChars } from 'pdflens';
+import { extractChars } from 'pdfexcavator';
 
 const textContent = await pdfPage.getTextContent();
 const chars = extractChars(textContent, 0, pageHeight);
@@ -64,7 +64,7 @@ for (const char of chars) {
 Group characters into words.
 
 ```typescript
-import { extractWords } from 'pdflens';
+import { extractWords } from 'pdfexcavator';
 
 const words = extractWords(chars, {
   xTolerance: 3,
@@ -90,7 +90,7 @@ for (const word of words) {
 Group characters into lines.
 
 ```typescript
-import { extractLines } from 'pdflens';
+import { extractLines } from 'pdfexcavator';
 
 const lines = extractLines(chars, 3);  // yTolerance defaults to 3
 
@@ -104,7 +104,7 @@ for (const line of lines) {
 Convert characters to text string.
 
 ```typescript
-import { extractText } from 'pdflens';
+import { extractText } from 'pdfexcavator';
 
 const text = extractText(chars, {
   layout: false,
@@ -118,7 +118,7 @@ const text = extractText(chars, {
 Fast text extraction.
 
 ```typescript
-import { extractTextSimple } from 'pdflens';
+import { extractTextSimple } from 'pdfexcavator';
 
 const text = extractTextSimple(chars, 3, 3, true);
 ```
@@ -128,7 +128,7 @@ const text = extractTextSimple(chars, 3, 3, true);
 Extract text preserving PDF order. Best for OCR'd documents.
 
 ```typescript
-import { extractTextFromItems } from 'pdflens';
+import { extractTextFromItems } from 'pdfexcavator';
 
 const textContent = await pdfPage.getTextContent();
 const text = extractTextFromItems(textContent, {
@@ -175,7 +175,7 @@ interface WordExtractionOptions {
 Fix common OCR/encoding issues in extracted text.
 
 ```typescript
-import { correctText, autoCorrectText, detectEncodingIssues } from 'pdflens';
+import { correctText, autoCorrectText, detectEncodingIssues } from 'pdfexcavator';
 
 // Auto-detect and fix
 const fixed = autoCorrectText(text);
@@ -205,7 +205,7 @@ import {
   extractCharsWithColors,
   extractCharsWithSpacing,
   extractCharsWithPrecision
-} from 'pdflens';
+} from 'pdfexcavator';
 
 // With color information
 const chars = await extractCharsWithColors(pdfPage, pageNum, height, offset);
@@ -220,10 +220,10 @@ const chars = await extractCharsWithPrecision(pdfPage, pageNum, height, offset);
 ## Example: Custom Text Processing
 
 ```typescript
-import pdflens, { extractWords, clusterObjects } from 'pdflens';
+import pdfexcavator, { extractWords, clusterObjects } from 'pdfexcavator';
 
 async function extractParagraphs(pdfPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const page = pdf.pages[0];
 
   // Get words

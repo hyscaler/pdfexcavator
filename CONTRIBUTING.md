@@ -1,6 +1,6 @@
-# Contributing to PDFLens
+# Contributing to PDFExcavator
 
-Thank you for your interest in contributing to PDFLens! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to PDFExcavator! This document provides guidelines and instructions for contributing.
 
 ## Ways to Contribute
 
@@ -13,8 +13,8 @@ Thank you for your interest in contributing to PDFLens! This document provides g
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/hyscaler/pdflens.git
-   cd pdflens
+   git clone https://github.com/pdfexcavator/pdfexcavator.git
+   cd pdfexcavator
    ```
 
 2. **Install dependencies**
@@ -35,10 +35,10 @@ Thank you for your interest in contributing to PDFLens! This document provides g
 ## Project Structure
 
 ```
-pdflens/
+pdfexcavator/
 ├── src/
 │   ├── index.ts          # Main exports
-│   ├── PDFLens.ts        # PDF document class
+│   ├── PDFExcavator.ts   # PDF document class
 │   ├── Page.ts           # Page class
 │   ├── PageImage.ts      # Image rendering
 │   ├── cli.ts            # CLI tool
@@ -93,7 +93,7 @@ pdflens/
 
 When reporting bugs, please include:
 
-- PDFLens version (`npm list pdflens`)
+- PDFExcavator version (`npm list pdfexcavator`)
 - Node.js version (`node --version`)
 - Operating system
 - Minimal code to reproduce the issue

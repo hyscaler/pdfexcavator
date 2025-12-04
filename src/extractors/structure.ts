@@ -42,7 +42,6 @@ export async function extractStructureTree(
   page: PDFPageProxy
 ): Promise<StructureElement | null> {
   try {
-    // pdf.js provides getStructTree() for accessing document structure
     const structTree = await (page as any).getStructTree?.();
 
     if (!structTree) {
@@ -66,24 +65,19 @@ function parseStructureTree(node: any): StructureElement {
     children: [],
   };
 
-  // Extract properties
   if (node.alt) element.alt = node.alt;
   if (node.actualText) element.actualText = node.actualText;
   if (node.lang) element.lang = node.lang;
 
-  // Extract marked content IDs
   if (node.children) {
     for (const child of node.children) {
       if (typeof child === 'number') {
-        // Direct MCID reference
         element.mcids.push(child);
       } else if (child.type === 'content') {
-        // Content reference with MCID
         if (child.id !== undefined) {
           element.mcids.push(child.id);
         }
       } else if (typeof child === 'object') {
-        // Nested structure element
         element.children.push(parseStructureTree(child));
       }
     }
@@ -104,11 +98,10 @@ export async function extractMarkedContent(
   try {
     const opList = await page.getOperatorList();
 
-    // PDF operator codes for marked content
     const OPS = {
-      beginMarkedContent: 69,      // BMC
-      beginMarkedContentProps: 70, // BDC
-      endMarkedContent: 71,        // EMC
+      beginMarkedContent: 69,
+      beginMarkedContentProps: 70,
+      endMarkedContent: 71,
     };
 
     for (let i = 0; i < opList.fnArray.length; i++) {
@@ -151,7 +144,6 @@ export async function getTextWithStructure(
 
   for (const item of textContent.items) {
     if ('type' in item) {
-      // Marked content boundary
       const mcItem = item as any;
       if (mcItem.type === 'beginMarkedContent' || mcItem.type === 'beginMarkedContentProps') {
         currentMcid = mcItem.id;
@@ -161,7 +153,6 @@ export async function getTextWithStructure(
         currentTag = undefined;
       }
     } else if ('str' in item) {
-      // Text item
       const textItem = item as TextItem;
       items.push({
         ...textItem,
@@ -182,46 +173,35 @@ export async function sortCharsByReadingOrder(
   page: PDFPageProxy,
   chars: PDFChar[]
 ): Promise<PDFChar[]> {
-  // Get structure tree
   const structure = await extractStructureTree(page);
 
   if (!structure || structure.children.length === 0) {
-    // No structure tree, fall back to visual sorting
     return sortCharsByVisualOrder(chars);
   }
 
-  // Get marked content mapping
   const markedContent = await extractMarkedContent(page);
 
   if (markedContent.size === 0) {
-    // No marked content, fall back to visual sorting
     return sortCharsByVisualOrder(chars);
   }
 
-  // Get text items with structure info
   const structuredText = await getTextWithStructure(page);
-
-  // Build MCID order from structure tree
   const mcidOrder = flattenMcidOrder(structure);
 
   if (mcidOrder.length === 0) {
     return sortCharsByVisualOrder(chars);
   }
 
-  // Create position -> order mapping
   const charOrder = new Map<PDFChar, number>();
   let orderIndex = 0;
 
-  // Map text items to order
   const textItemOrder = new Map<number, number>();
   for (const mcid of mcidOrder) {
     textItemOrder.set(mcid, orderIndex++);
   }
 
-  // Assign order to characters based on their approximate position match with text items
   const sortedChars = [...chars];
 
-  // Create a position-based lookup for structured text items
   const positionToMcid = new Map<string, number>();
   for (const item of structuredText) {
     if (item.mcid !== undefined && item.str) {
@@ -230,9 +210,7 @@ export async function sortCharsByReadingOrder(
     }
   }
 
-  // Try to match chars to MCIDs
   for (const char of sortedChars) {
-    // Look for nearby position matches
     for (let dx = -5; dx <= 5; dx += 5) {
       for (let dy = -5; dy <= 5; dy += 5) {
         const key = `${Math.round(char.x0 + dx)},${Math.round(char.y1 + dy)}`;
@@ -248,18 +226,15 @@ export async function sortCharsByReadingOrder(
       if (charOrder.has(char)) break;
     }
 
-    // If no match, assign a large order to push to end
     if (!charOrder.get(char)) {
       charOrder.set(char, 100000 + char.y0 * 1000 + char.x0);
     }
   }
 
-  // Sort by order
   sortedChars.sort((a, b) => {
     const orderA = charOrder.get(a) ?? 100000;
     const orderB = charOrder.get(b) ?? 100000;
     if (orderA !== orderB) return orderA - orderB;
-    // Secondary sort by position
     if (Math.abs(a.y0 - b.y0) > 3) return a.y0 - b.y0;
     return a.x0 - b.x0;
   });
@@ -273,10 +248,8 @@ export async function sortCharsByReadingOrder(
 function flattenMcidOrder(element: StructureElement): number[] {
   const mcids: number[] = [];
 
-  // Add this element's MCIDs
   mcids.push(...element.mcids);
 
-  // Recursively add children's MCIDs
   for (const child of element.children) {
     mcids.push(...flattenMcidOrder(child));
   }
@@ -293,12 +266,10 @@ export function sortCharsByVisualOrder(
   yTolerance: number = 3
 ): PDFChar[] {
   return [...chars].sort((a, b) => {
-    // Group by approximate y position (line)
     const yDiff = a.y0 - b.y0;
     if (Math.abs(yDiff) > yTolerance) {
       return yDiff;
     }
-    // Within same line, sort by x
     return a.x0 - b.x0;
   });
 }
@@ -327,14 +298,12 @@ export function sortCharsByColumnOrder(
 ): PDFChar[] {
   if (chars.length === 0) return [];
 
-  // Auto-detect columns if not provided
   const cols = columns || detectColumns(chars);
 
   if (cols.length <= 1) {
     return sortCharsByVisualOrder(chars, yTolerance);
   }
 
-  // Assign each character to a column
   const charColumns = chars.map(char => {
     const centerX = (char.x0 + char.x1) / 2;
     for (let i = 0; i < cols.length; i++) {
@@ -342,7 +311,6 @@ export function sortCharsByColumnOrder(
         return { char, column: i };
       }
     }
-    // Default to closest column
     let closest = 0;
     let minDist = Infinity;
     for (let i = 0; i < cols.length; i++) {
@@ -358,7 +326,6 @@ export function sortCharsByColumnOrder(
     return { char, column: closest };
   });
 
-  // Sort by column, then by y, then by x
   return charColumns
     .sort((a, b) => {
       if (a.column !== b.column) return a.column - b.column;

@@ -5,10 +5,10 @@ Code examples for extracting tables from PDFs.
 ## Basic Table Extraction
 
 ```typescript
-import pdflens from 'pdflens';
+import pdfexcavator from 'pdfexcavator';
 
 async function extractAllTables(pdfPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const allTables: { page: number; table: string[][] }[] = [];
 
   for (const page of pdf.pages) {
@@ -71,7 +71,7 @@ function tableToCSV(table: { rows: string[][] }): string {
 }
 
 async function exportTablesToCSV(pdfPath: string, outputDir: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   let tableCount = 0;
 
   for (const page of pdf.pages) {
@@ -126,7 +126,7 @@ function escapeHTML(str: string): string {
 
 ```typescript
 async function tablesToExcelData(pdfPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const sheets: { name: string; data: string[][] }[] = [];
 
   for (const page of pdf.pages) {
@@ -156,7 +156,7 @@ async function tablesToExcelData(pdfPath: string) {
 
 ```typescript
 async function extractTableByIndex(pdfPath: string, pageNum: number, tableIndex: number) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const page = pdf.getPage(pageNum - 1);
 
   const tables = await page.extractTables();
@@ -177,7 +177,7 @@ async function extractTablesFromRegion(
   pdfPath: string,
   bbox: [number, number, number, number]
 ) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const page = pdf.pages[0];
 
   // Crop to region
@@ -193,7 +193,7 @@ async function extractTablesFromRegion(
 
 ```typescript
 async function extractLargeTables(pdfPath: string, minRows: number = 3) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const largeTables: { page: number; rows: string[][] }[] = [];
 
   for (const page of pdf.pages) {
@@ -218,7 +218,7 @@ async function extractLargeTables(pdfPath: string, minRows: number = 3) {
 
 ```typescript
 async function extractConfidentTables(pdfPath: string, minConfidence = 0.7) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const goodTables: { page: number; confidence: number; rows: string[][] }[] = [];
 
   for (const page of pdf.pages) {
@@ -244,7 +244,7 @@ async function extractConfidentTables(pdfPath: string, minConfidence = 0.7) {
 
 ```typescript
 async function mergeTablesAcrossPages(pdfPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   let mergedRows: string[][] = [];
   let headers: string[] | null = null;
 
@@ -275,10 +275,10 @@ async function mergeTablesAcrossPages(pdfPath: string) {
 ## Extract Nested Tables
 
 ```typescript
-import { extractTablesEnhanced } from 'pdflens';
+import { extractTablesEnhanced } from 'pdfexcavator';
 
 async function extractWithNestedTables(pdfPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const page = pdf.pages[0];
 
   const chars = await page.chars;
@@ -309,10 +309,10 @@ async function extractWithNestedTables(pdfPath: string) {
 ## Debug Table Detection
 
 ```typescript
-import { debugTableFinder } from 'pdflens';
+import { debugTableFinder } from 'pdfexcavator';
 
 async function debugTables(pdfPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const page = pdf.pages[0];
 
   const chars = await page.chars;

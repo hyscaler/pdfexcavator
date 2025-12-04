@@ -6,23 +6,23 @@ Command-line interface for PDF extraction.
 
 ```bash
 # Global installation
-npm install -g pdflens
+npm install -g pdfexcavator
 
 # Or use with npx
-npx pdflens document.pdf
+npx pdfexcavator document.pdf
 ```
 
 ## Basic Usage
 
 ```bash
 # Extract all objects (default)
-pdflens document.pdf
+pdfexcavator document.pdf
 
 # Extract text only
-pdflens text document.pdf
+pdfexcavator text document.pdf
 
 # Extract tables
-pdflens tables document.pdf
+pdfexcavator tables document.pdf
 ```
 
 ## Commands
@@ -47,39 +47,39 @@ pdflens tables document.pdf
 
 ```bash
 # Specific pages
-pdflens document.pdf --pages 1,3,5
+pdfexcavator document.pdf --pages 1,3,5
 
 # Page range
-pdflens document.pdf --pages 1-10
+pdfexcavator document.pdf --pages 1-10
 
 # Combined
-pdflens document.pdf --pages 1,3-5,10
+pdfexcavator document.pdf --pages 1,3-5,10
 ```
 
 ### Output Format
 
 ```bash
 # JSON output
-pdflens document.pdf --format json
+pdfexcavator document.pdf --format json
 
 # CSV output (tables)
-pdflens tables document.pdf --format csv
+pdfexcavator tables document.pdf --format csv
 
 # Text output
-pdflens text document.pdf --format text
+pdfexcavator text document.pdf --format text
 ```
 
 ### Other Options
 
 ```bash
 # JSON indentation
-pdflens document.pdf -f json --indent 4
+pdfexcavator document.pdf -f json --indent 4
 
 # Coordinate precision
-pdflens chars document.pdf --precision 3
+pdfexcavator chars document.pdf --precision 3
 
 # Password for encrypted PDFs
-pdflens document.pdf --password secret123
+pdfexcavator document.pdf --password secret123
 ```
 
 ## Examples
@@ -88,32 +88,32 @@ pdflens document.pdf --password secret123
 
 ```bash
 # All pages
-pdflens text document.pdf
+pdfexcavator text document.pdf
 
 # Specific pages
-pdflens text document.pdf --pages 1-5
+pdfexcavator text document.pdf --pages 1-5
 
 # Save to file
-pdflens text document.pdf > output.txt
+pdfexcavator text document.pdf > output.txt
 ```
 
 ### Extract Tables
 
 ```bash
 # As CSV
-pdflens tables document.pdf --format csv
+pdfexcavator tables document.pdf --format csv
 
 # As JSON
-pdflens tables document.pdf --format json > tables.json
+pdfexcavator tables document.pdf --format json > tables.json
 
 # From specific pages
-pdflens tables document.pdf --pages 2,4,6 --format csv
+pdfexcavator tables document.pdf --pages 2,4,6 --format csv
 ```
 
 ### Get Metadata
 
 ```bash
-pdflens metadata document.pdf
+pdfexcavator metadata document.pdf
 ```
 
 Output:
@@ -128,7 +128,7 @@ Encrypted: No
 ### Page Information
 
 ```bash
-pdflens info document.pdf
+pdfexcavator info document.pdf
 ```
 
 Output:
@@ -143,7 +143,7 @@ Page 3: 792 x 612 (landscape)
 
 ```bash
 # Get character positions
-pdflens chars document.pdf --pages 1 --format json
+pdfexcavator chars document.pdf --pages 1 --format json
 ```
 
 Output:
@@ -164,10 +164,10 @@ Output:
 
 ```bash
 # Only characters and rectangles
-pdflens document.pdf --types char,rect
+pdfexcavator document.pdf --types char,rect
 
 # Characters, lines, and images
-pdflens document.pdf --types char,line,image
+pdfexcavator document.pdf --types char,line,image
 ```
 
 ## Piping and Scripting
@@ -176,13 +176,13 @@ pdflens document.pdf --types char,line,image
 
 ```bash
 # Search in extracted text
-pdflens text document.pdf | grep "important"
+pdfexcavator text document.pdf | grep "important"
 
 # Count words
-pdflens text document.pdf | wc -w
+pdfexcavator text document.pdf | wc -w
 
 # Process with jq
-pdflens tables document.pdf -f json | jq '.[0].rows'
+pdfexcavator tables document.pdf -f json | jq '.[0].rows'
 ```
 
 ### Batch Processing
@@ -190,7 +190,7 @@ pdflens tables document.pdf -f json | jq '.[0].rows'
 ```bash
 # Process multiple PDFs
 for pdf in *.pdf; do
-  pdflens text "$pdf" > "${pdf%.pdf}.txt"
+  pdfexcavator text "$pdf" > "${pdf%.pdf}.txt"
 done
 ```
 
@@ -198,7 +198,7 @@ done
 
 ```bash
 # Extract text from all PDFs
-find . -name "*.pdf" | xargs -I {} pdflens text {} > all_text.txt
+find . -name "*.pdf" | xargs -I {} pdfexcavator text {} > all_text.txt
 ```
 
 ## Output Formats
@@ -235,10 +235,10 @@ Plain text output with basic formatting.
 
 ```bash
 # Show help
-pdflens --help
+pdfexcavator --help
 
 # Show version
-pdflens --version
+pdfexcavator --version
 ```
 
 ## Exit Codes

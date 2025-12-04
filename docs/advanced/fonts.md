@@ -28,12 +28,12 @@ console.log('Fonts used:', fonts);
 
 ## Font Substitution
 
-PDFLens automatically substitutes fonts for the 14 PDF base fonts.
+PDFExcavator automatically substitutes fonts for the 14 PDF base fonts.
 
 ### Find Substitution
 
 ```typescript
-import { findFontSubstitution } from 'pdflens';
+import { findFontSubstitution } from 'pdfexcavator';
 
 const sub = findFontSubstitution('Arial');
 console.log(sub.substituteFont);  // 'Helvetica'
@@ -43,7 +43,7 @@ console.log(sub.confidence);      // 0.95
 ### Font Classification
 
 ```typescript
-import { classifyFont } from 'pdflens';
+import { classifyFont } from 'pdfexcavator';
 
 classifyFont('Times');      // 'serif'
 classifyFont('Arial');      // 'sans-serif'
@@ -54,7 +54,7 @@ classifyFont('Symbol');     // 'symbol'
 ### Parse Font Style
 
 ```typescript
-import { parseFontStyle } from 'pdflens';
+import { parseFontStyle } from 'pdfexcavator';
 
 const style = parseFontStyle('Arial-BoldItalic');
 console.log(style.bold);      // true
@@ -66,7 +66,7 @@ console.log(style.baseName);  // 'Arial'
 ## PDF Base Fonts
 
 ```typescript
-import { PDF_BASE_FONTS, STANDARD_FONT_METRICS } from 'pdflens';
+import { PDF_BASE_FONTS, STANDARD_FONT_METRICS } from 'pdfexcavator';
 
 console.log(PDF_BASE_FONTS);
 // ['Helvetica', 'Helvetica-Bold', 'Helvetica-Oblique', 'Helvetica-BoldOblique',
@@ -83,7 +83,7 @@ console.log(STANDARD_FONT_METRICS['Helvetica']);
 ### Extract Metrics
 
 ```typescript
-import { extractFontMetrics, getCharWidth, getBaseline } from 'pdflens';
+import { extractFontMetrics, getCharWidth, getBaseline } from 'pdfexcavator';
 
 // Get metrics for fonts on page
 const textContent = await pdfPage.getTextContent();
@@ -103,7 +103,7 @@ import {
   getFontSubstitutions,
   getMissingFonts,
   resetFontSubstitutions
-} from 'pdflens';
+} from 'pdfexcavator';
 
 // After processing
 const subs = getFontSubstitutions();
@@ -119,7 +119,7 @@ resetFontSubstitutions();
 ## Font Substitution Manager
 
 ```typescript
-import { FontSubstitutionManager } from 'pdflens';
+import { FontSubstitutionManager } from 'pdfexcavator';
 
 const manager = new FontSubstitutionManager();
 
@@ -136,7 +136,7 @@ console.log(manager.getAllSubstitutions());
 ### Detect CJK Fonts
 
 ```typescript
-import { isCJKFont } from 'pdflens';
+import { isCJKFont } from 'pdfexcavator';
 
 isCJKFont('SimSun');     // true - Chinese
 isCJKFont('MS-Mincho');  // true - Japanese
@@ -147,7 +147,7 @@ isCJKFont('Arial');      // false
 ### Normalize CJK Text
 
 ```typescript
-import { normalizeCJKText } from 'pdflens';
+import { normalizeCJKText } from 'pdfexcavator';
 
 // Convert fullwidth to halfwidth
 normalizeCJKText('ABC');  // 'ABC'
@@ -157,7 +157,7 @@ normalizeCJKText('123');  // '123'
 ### CMap Configuration
 
 ```typescript
-import { getDefaultCMapConfig } from 'pdflens';
+import { getDefaultCMapConfig } from 'pdfexcavator';
 
 // Get CMap config for pdf.js
 const config = await getDefaultCMapConfig();
@@ -168,7 +168,7 @@ const config = await getDefaultCMapConfig();
 
 ```typescript
 async function analyzeFonts(pdfPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const fontUsage = new Map<string, { count: number; sizes: Set<number> }>();
 
   for (const page of pdf.pages) {
@@ -205,7 +205,7 @@ async function analyzeFonts(pdfPath: string) {
 
 ```typescript
 async function extractByFont(pdfPath: string, targetFont: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const page = pdf.pages[0];
 
   const filtered = page.filter(obj =>
@@ -225,7 +225,7 @@ const boldText = await extractByFont('document.pdf', 'bold');
 
 ```typescript
 async function detectFontIssues(pdfPath: string) {
-  const pdf = await pdflens.open(pdfPath);
+  const pdf = await pdfexcavator.open(pdfPath);
   const issues: string[] = [];
 
   for (const page of pdf.pages) {
@@ -253,6 +253,6 @@ async function detectFontIssues(pdfPath: string) {
 ## Tips
 
 1. **Check for OCR fonts**: Synthetic font names like `g_d0_f1` indicate OCR
-2. **Use substitution**: Let PDFLens handle font mapping automatically
+2. **Use substitution**: Let PDFExcavator handle font mapping automatically
 3. **CJK setup**: Ensure CMap files are available for Asian text
 4. **Font filtering**: Use font name to identify headings, body text, etc.

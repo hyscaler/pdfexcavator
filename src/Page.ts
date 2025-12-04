@@ -73,6 +73,13 @@ import {
 } from './utils/ocr.js';
 
 /**
+ * Escape special regex characters in a string to prevent ReDoS attacks
+ */
+function escapeRegExp(string: string): string {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
  * Page class with lazy loading and caching for optimal performance
  */
 export class Page {
@@ -1063,14 +1070,26 @@ export class Page {
 
   /**
    * Search for text on the page
+   * @param pattern - String for literal search, or RegExp for pattern matching
+   * @param options - Search options
+   * @param options.literal - If true, treat string pattern as literal text (default: true for strings)
    */
   async search(
-    pattern: string | RegExp
+    pattern: string | RegExp,
+    options: { literal?: boolean } = {}
   ): Promise<Array<{ text: string; x0: number; y0: number; x1: number; y1: number; chars: PDFChar[] }>> {
     const words = await this.extractWords();
     const results: Array<{ text: string; x0: number; y0: number; x1: number; y1: number; chars: PDFChar[] }> = [];
 
-    const regex = typeof pattern === 'string' ? new RegExp(pattern, 'gi') : pattern;
+    let regex: RegExp;
+    if (typeof pattern === 'string') {
+      // Default to literal search for strings to prevent ReDoS
+      const useLiteral = options.literal !== false;
+      const safePattern = useLiteral ? escapeRegExp(pattern) : pattern;
+      regex = new RegExp(safePattern, 'gi');
+    } else {
+      regex = pattern;
+    }
 
     for (const word of words) {
       if (regex.test(word.text)) {
@@ -1154,6 +1173,7 @@ export class Page {
     this._curves = null;
     this._images = null;
     this._annots = null;
+    this._operatorList = null;
     // Clear font cache for this page
     clearFontCache(this._page);
   }
@@ -1884,12 +1904,20 @@ class OutsideBBoxPage {
 
   /** Search for text outside the excluded box */
   async search(
-    pattern: string | RegExp
+    pattern: string | RegExp,
+    options: { literal?: boolean } = {}
   ): Promise<Array<{ text: string; x0: number; y0: number; x1: number; y1: number; chars: PDFChar[] }>> {
     const words = await this.extractWords();
     const results: Array<{ text: string; x0: number; y0: number; x1: number; y1: number; chars: PDFChar[] }> = [];
 
-    const regex = typeof pattern === 'string' ? new RegExp(pattern, 'gi') : pattern;
+    let regex: RegExp;
+    if (typeof pattern === 'string') {
+      const useLiteral = options.literal !== false;
+      const safePattern = useLiteral ? escapeRegExp(pattern) : pattern;
+      regex = new RegExp(safePattern, 'gi');
+    } else {
+      regex = pattern;
+    }
 
     for (const word of words) {
       if (regex.test(word.text)) {
@@ -2046,12 +2074,20 @@ class FilteredPage {
   }
 
   async search(
-    pattern: string | RegExp
+    pattern: string | RegExp,
+    options: { literal?: boolean } = {}
   ): Promise<Array<{ text: string; x0: number; y0: number; x1: number; y1: number; chars: PDFChar[] }>> {
     const words = await this.extractWords();
     const results: Array<{ text: string; x0: number; y0: number; x1: number; y1: number; chars: PDFChar[] }> = [];
 
-    const regex = typeof pattern === 'string' ? new RegExp(pattern, 'gi') : pattern;
+    let regex: RegExp;
+    if (typeof pattern === 'string') {
+      const useLiteral = options.literal !== false;
+      const safePattern = useLiteral ? escapeRegExp(pattern) : pattern;
+      regex = new RegExp(safePattern, 'gi');
+    } else {
+      regex = pattern;
+    }
 
     for (const word of words) {
       if (regex.test(word.text)) {

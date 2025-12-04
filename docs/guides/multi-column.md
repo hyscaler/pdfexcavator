@@ -33,7 +33,7 @@ console.log(`Found ${columns.length} columns`);
 ### Manual Detection
 
 ```typescript
-import { clusterObjects } from 'pdflens';
+import { clusterObjects } from 'pdfexcavator';
 
 const words = await page.extractWords();
 

@@ -316,7 +316,7 @@ function contextAwareNumberToLetter(text: string, minConfidence: number): string
  *
  * @example
  * ```typescript
- * import { correctText } from 'pdflens';
+ * import { correctText } from 'pdfexcavator';
  *
  * const garbled = "Th3 qu1ck br0wn f0x jump3 0ver the lazy d0g";
  * const fixed = correctText(garbled);
