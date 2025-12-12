@@ -27,10 +27,14 @@ const text = await page.extractTextRaw();
 Extract individual characters with full metadata.
 
 ```typescript
-import { extractChars } from 'pdfexcavator';
+import pdfexcavator, { extractChars } from 'pdfexcavator';
 
-const textContent = await pdfPage.getTextContent();
-const chars = extractChars(textContent, 0, pageHeight);
+const pdf = await pdfexcavator.open('document.pdf');
+const page = pdf.pages[0];
+
+// Get textContent from the underlying pdf.js page
+const textContent = await page.pdfPage.getTextContent();
+const chars = extractChars(textContent, page.pageNumber, page.height);
 
 for (const char of chars) {
   console.log({
@@ -128,9 +132,12 @@ const text = extractTextSimple(chars, 3, 3, true);
 Extract text preserving PDF order. Best for OCR'd documents.
 
 ```typescript
-import { extractTextFromItems } from 'pdfexcavator';
+import pdfexcavator, { extractTextFromItems } from 'pdfexcavator';
 
-const textContent = await pdfPage.getTextContent();
+const pdf = await pdfexcavator.open('document.pdf');
+const page = pdf.pages[0];
+
+const textContent = await page.pdfPage.getTextContent();
 const text = extractTextFromItems(textContent, {
   detectLineBreaks: true,
   lineBreakThreshold: 5,
@@ -198,23 +205,26 @@ if (issues.hasIssues) {
 
 ## Precision Extraction
 
-For maximum accuracy with complex PDFs.
+For maximum accuracy with complex PDFs. Use `page.pdfPage` to access the underlying pdf.js page.
 
 ```typescript
-import {
+import pdfexcavator, {
   extractCharsWithColors,
   extractCharsWithSpacing,
   extractCharsWithPrecision
 } from 'pdfexcavator';
 
+const pdf = await pdfexcavator.open('document.pdf');
+const page = pdf.pages[0];
+
 // With color information
-const chars = await extractCharsWithColors(pdfPage, pageNum, height, offset);
+const chars = await extractCharsWithColors(page.pdfPage, page.pageNumber, page.height, 0);
 
 // With spacing adjustments
-const chars = await extractCharsWithSpacing(pdfPage, pageNum, height, offset);
+const chars = await extractCharsWithSpacing(page.pdfPage, page.pageNumber, page.height, 0);
 
 // Full precision with state tracking
-const chars = await extractCharsWithPrecision(pdfPage, pageNum, height, offset);
+const chars = await extractCharsWithPrecision(page.pdfPage, page.pageNumber, page.height, 0);
 ```
 
 ## Example: Custom Text Processing

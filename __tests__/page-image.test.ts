@@ -589,7 +589,7 @@ describe('PageImage', () => {
       const page = await doc.getPage(0);
       const image = await page.toImage();
 
-      const copy = image.copy();
+      const copy = await image.copy();
 
       expect(copy).toBeInstanceOf(PageImage);
       expect(copy.width).toBe(image.width);

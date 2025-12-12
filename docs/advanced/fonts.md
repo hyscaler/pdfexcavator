@@ -83,11 +83,14 @@ console.log(STANDARD_FONT_METRICS['Helvetica']);
 ### Extract Metrics
 
 ```typescript
-import { extractFontMetrics, getCharWidth, getBaseline } from 'pdfexcavator';
+import pdfexcavator, { extractFontMetrics, getCharWidth, getBaseline } from 'pdfexcavator';
+
+const pdf = await pdfexcavator.open('document.pdf');
+const page = pdf.pages[0];
 
 // Get metrics for fonts on page
-const textContent = await pdfPage.getTextContent();
-const metrics = await extractFontMetrics(pdfPage, textContent);
+const textContent = await page.pdfPage.getTextContent();
+const metrics = await extractFontMetrics(page.pdfPage, textContent);
 
 // Get character width
 const width = getCharWidth(metrics.get('Helvetica'), 'A', 12);

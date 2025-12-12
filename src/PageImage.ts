@@ -85,8 +85,9 @@ export class PageImage {
   }
 
   /** Create a copy of this PageImage */
-  copy(): PageImage {
-    const { createCanvas } = this._getCanvasModule();
+  async copy(): Promise<PageImage> {
+    const canvasModule = await this._getCanvasModule();
+    const { createCanvas } = canvasModule.default || canvasModule;
     const newCanvas = createCanvas(this._canvas.width, this._canvas.height);
     const newContext = newCanvas.getContext('2d');
     newContext.drawImage(this._canvas, 0, 0);
@@ -467,12 +468,11 @@ export class PageImage {
   }
 
   /** Get canvas module (for copy operation) */
-  private _getCanvasModule(): any {
-    // Using require() for synchronous loading in copy() method
+  private async _getCanvasModule(): Promise<any> {
+    // Using dynamic import for ESM compatibility
     // Canvas is an optional peer dependency
     try {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      return require('canvas');
+      return await import('canvas');
     } catch {
       throw new Error('Canvas module not available. Install with: npm install canvas');
     }
