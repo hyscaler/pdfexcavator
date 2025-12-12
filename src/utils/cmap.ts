@@ -3,10 +3,10 @@
  * Enables proper handling of CJK (Chinese, Japanese, Korean) characters
  */
 
-import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { readFile, access } from 'fs/promises';
 import { constants } from 'fs';
+import { createRequire } from 'module';
 
 /**
  * CMap configuration for pdf.js
@@ -20,32 +20,24 @@ export interface CMapConfig {
 
 /**
  * Get the default CMap configuration
- * Attempts to locate CMap files from pdfjs-dist package
+ * Uses createRequire to properly resolve pdfjs-dist regardless of node_modules structure
  */
 export async function getDefaultCMapConfig(): Promise<CMapConfig | null> {
-  // Try to find pdfjs-dist cmaps directory
-  const possiblePaths = [
-    // Node.js module resolution
-    join(process.cwd(), 'node_modules', 'pdfjs-dist', 'cmaps'),
-    // Relative to this file
-    join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'node_modules', 'pdfjs-dist', 'cmaps'),
-    // Global installation
-    '/usr/local/lib/node_modules/pdfjs-dist/cmaps',
-  ];
+  try {
+    // Use createRequire to resolve pdfjs-dist path correctly in any node_modules structure
+    const require = createRequire(import.meta.url);
+    const pdfjsDistPath = dirname(require.resolve('pdfjs-dist/package.json'));
+    const cmapPath = join(pdfjsDistPath, 'cmaps');
 
-  for (const cmapPath of possiblePaths) {
-    try {
-      await access(cmapPath, constants.R_OK);
-      return {
-        cMapUrl: cmapPath,
-        cMapPacked: true, // pdfjs-dist uses packed bcmap format
-      };
-    } catch {
-      // Path not accessible, try next
-    }
+    await access(cmapPath, constants.R_OK);
+    return {
+      cMapUrl: cmapPath,
+      cMapPacked: true, // pdfjs-dist uses packed bcmap format
+    };
+  } catch {
+    // pdfjs-dist not found or cmaps not accessible
+    return null;
   }
-
-  return null;
 }
 
 /**

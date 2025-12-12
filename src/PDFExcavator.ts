@@ -10,6 +10,7 @@ import type { PDFDocumentProxy } from 'pdfjs-dist';
 import { readFile } from 'fs/promises';
 import { fileURLToPath } from 'url';
 import { dirname, join, resolve, normalize } from 'path';
+import { createRequire } from 'module';
 import { Page } from './Page.js';
 import type { OpenOptions, PDFMetadata, TextExtractionOptions, ProcessingOptions, ProcessingResult, ProcessingError } from './types.js';
 import {
@@ -31,11 +32,9 @@ import {
 const getDocument = pdfjsLib.getDocument;
 
 // Set up worker for Node.js environment
-// Find the worker file path relative to pdfjs-dist
-const workerPath = join(
-  dirname(fileURLToPath(import.meta.url)),
-  '../node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs'
-);
+// Use createRequire to properly resolve pdfjs-dist regardless of node_modules structure
+const require = createRequire(import.meta.url);
+const workerPath = require.resolve('pdfjs-dist/legacy/build/pdf.worker.mjs');
 // @ts-ignore
 pdfjsLib.GlobalWorkerOptions.workerSrc = workerPath;
 
