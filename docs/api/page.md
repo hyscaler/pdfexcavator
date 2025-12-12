@@ -36,6 +36,22 @@ Page rotation in degrees (0, 90, 180, 270).
 console.log(page.rotation); // 0
 ```
 
+### pdfPage
+
+Access to underlying pdf.js PDFPageProxy for advanced use cases.
+
+```typescript
+import { extractCharsWithPrecision } from 'pdfexcavator';
+
+// Use with low-level extraction functions
+const chars = await extractCharsWithPrecision(
+  page.pdfPage,
+  page.pageNumber,
+  page.height,
+  0
+);
+```
+
 ### chars
 
 Characters on the page (async getter).
@@ -111,12 +127,12 @@ for (const word of words) {
 | yTolerance | `number` | 3 | Vertical grouping |
 | splitAtPunctuation | `boolean` | false | Split on punctuation |
 
-### getLines()
+### getTextLines()
 
 Get text lines.
 
 ```typescript
-const lines = await page.getLines();
+const lines = await page.getTextLines();
 for (const line of lines) {
   console.log(line.text);
 }
@@ -206,7 +222,7 @@ Get PDF annotations.
 ```typescript
 const annots = await page.getAnnotations();
 for (const annot of annots) {
-  console.log(`${annot.subtype}: ${annot.contents}`);
+  console.log(`${annot.annotationType}: ${annot.contents}`);
 }
 ```
 
@@ -217,7 +233,7 @@ Get hyperlinks.
 ```typescript
 const links = await page.getHyperlinks();
 for (const link of links) {
-  console.log(`Link: ${link.url}`);
+  console.log(`Link: ${link.uri}`);
 }
 ```
 

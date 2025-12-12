@@ -98,8 +98,7 @@ import { needsOCR } from 'pdfexcavator';
 
 const chars = await page.chars;
 const images = await page.getImages();
-const { width, height } = await page.size;
-const pageArea = width * height;
+const pageArea = page.width * page.height;
 const imageArea = images.reduce((sum, img) => sum + img.width * img.height, 0);
 
 const needs = needsOCR(chars.length, images.length, pageArea, imageArea);
@@ -114,9 +113,8 @@ import { isLikelyScanned } from 'pdfexcavator';
 
 const chars = await page.chars;
 const images = await page.getImages();
-const { width, height } = await page.size;
 
-const isScanned = isLikelyScanned(chars.length, images, width, height);
+const isScanned = isLikelyScanned(chars.length, images, page.width, page.height);
 ```
 
 ### terminateOCR()

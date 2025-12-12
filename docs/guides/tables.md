@@ -24,7 +24,8 @@ Uses visible lines/borders to detect table structure:
 
 ```typescript
 const tables = await page.extractTables({
-  strategy: 'lines'
+  verticalStrategy: 'lines',
+  horizontalStrategy: 'lines'
 });
 ```
 
@@ -39,7 +40,8 @@ Analyzes text alignment to infer table structure:
 
 ```typescript
 const tables = await page.extractTables({
-  strategy: 'text'
+  verticalStrategy: 'text',
+  horizontalStrategy: 'text'
 });
 ```
 

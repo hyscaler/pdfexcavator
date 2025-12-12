@@ -148,6 +148,14 @@ export class Page {
     return this._rotation;
   }
 
+  /**
+   * Access to underlying pdf.js PDFPageProxy for advanced use cases.
+   * Use this with low-level extraction functions like extractCharsWithPrecision.
+   */
+  get pdfPage(): PDFPageProxy {
+    return this._page;
+  }
+
   /** Page bounding box */
   get bbox(): BBox {
     return this._cropBBox || [0, 0, this._width, this._height];

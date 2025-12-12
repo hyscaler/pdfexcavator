@@ -16,14 +16,13 @@ Precision mode provides exact character positioning by tracking all PDF graphics
 ## Basic Usage
 
 ```typescript
-import { extractCharsWithPrecision } from 'pdfexcavator';
+import pdfexcavator, { extractCharsWithPrecision } from 'pdfexcavator';
 
 const pdf = await pdfexcavator.open('document.pdf');
 const page = pdf.pages[0];
-const pdfPage = page._page;
 
 const chars = await extractCharsWithPrecision(
-  pdfPage,
+  page.pdfPage,
   page.pageNumber,
   page.height,
   0  // doctop offset
@@ -55,7 +54,7 @@ const chars = await page.chars;
 import { extractCharsWithColors } from 'pdfexcavator';
 
 const chars = await extractCharsWithColors(
-  pdfPage, pageNumber, pageHeight, offset
+  page.pdfPage, page.pageNumber, page.height, 0
 );
 
 for (const char of chars) {
@@ -70,7 +69,7 @@ for (const char of chars) {
 import { extractCharsWithSpacing } from 'pdfexcavator';
 
 const chars = await extractCharsWithSpacing(
-  pdfPage, pageNumber, pageHeight, offset
+  page.pdfPage, page.pageNumber, page.height, 0
 );
 
 // Includes charSpacing, wordSpacing, horizontalScale
@@ -82,7 +81,7 @@ const chars = await extractCharsWithSpacing(
 import { extractCharsWithPrecision } from 'pdfexcavator';
 
 const chars = await extractCharsWithPrecision(
-  pdfPage, pageNumber, pageHeight, offset
+  page.pdfPage, page.pageNumber, page.height, 0
 );
 
 // Full state tracking with rotation, textRise, etc.
@@ -96,7 +95,7 @@ Direct access to PDF graphics state.
 import { PDFStateTracker, createStateTracker } from 'pdfexcavator';
 
 // Create tracker
-const tracker = await createStateTracker(pdfPage, pageHeight);
+const tracker = await createStateTracker(page.pdfPage, page.height);
 
 // Get state at position
 const state = tracker.getStateAt(x, y);
@@ -152,7 +151,7 @@ async function extractRotatedText(pdfPath: string) {
   const page = pdf.pages[0];
 
   const chars = await extractCharsWithPrecision(
-    page._page, page.pageNumber, page.height, 0
+    page.pdfPage, page.pageNumber, page.height, 0
   );
 
   // Find rotated characters
@@ -187,7 +186,7 @@ async function extractSubSuperscript(pdfPath: string) {
   const page = pdf.pages[0];
 
   const chars = await extractCharsWithPrecision(
-    page._page, page.pageNumber, page.height, 0
+    page.pdfPage, page.pageNumber, page.height, 0
   );
 
   // Find characters with text rise
