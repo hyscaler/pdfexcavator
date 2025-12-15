@@ -60,7 +60,6 @@ const style = parseFontStyle('Arial-BoldItalic');
 console.log(style.bold);      // true
 console.log(style.italic);    // true
 console.log(style.weight);    // 700
-console.log(style.baseName);  // 'Arial'
 ```
 
 ## PDF Base Fonts
@@ -95,8 +94,9 @@ const metrics = await extractFontMetrics(page.pdfPage, textContent);
 // Get character width
 const width = getCharWidth(metrics.get('Helvetica'), 'A', 12);
 
-// Get baseline
-const baseline = getBaseline('Helvetica', 12);
+// Get baseline position from character bounds
+const char = (await page.chars)[0];
+const baseline = getBaseline(char.y0, char.y1, metrics.get(char.fontName));
 ```
 
 ### Track Substitutions

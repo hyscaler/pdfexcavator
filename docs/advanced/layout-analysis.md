@@ -155,7 +155,7 @@ const chars = await page.chars;
 
 // Detect overall direction
 const direction = detectReadingDirection(chars);
-// 'ltr' | 'rtl' | 'ttb'
+// 'ltr' | 'rtl' | 'ttb' | 'btt'
 
 // Check for vertical text
 const hasVertical = isVerticalText(chars);

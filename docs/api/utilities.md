@@ -96,13 +96,14 @@ bboxUnion([0, 0, 50, 50], [25, 25, 100, 100]);
 // [0, 0, 100, 100]
 ```
 
-### getBBox(objects)
+### getBBox(obj)
 
-Get bounding box of objects with x0, y0, x1, y1 properties.
+Extract bounding box from a single object with x0, y0, x1, y1 properties.
 
 ```typescript
 const chars = await page.chars;
-const bbox = getBBox(chars);
+const bbox = getBBox(chars[0]);  // Get bbox of first character
+// Returns: [x0, y0, x1, y1]
 ```
 
 ### bboxArea(bbox)

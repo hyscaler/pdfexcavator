@@ -118,12 +118,14 @@ console.log('Rotation:', position.rotationAngle);
 
 ```typescript
 interface TextState {
-  charSpacing: number;      // Extra space between characters
-  wordSpacing: number;      // Extra space between words
-  horizontalScale: number;  // Horizontal scaling factor
-  textRise: number;         // Vertical offset (subscript/superscript)
+  charSpacing: number;       // Extra space between characters
+  wordSpacing: number;       // Extra space between words
+  horizontalScale: number;   // Horizontal scaling factor
+  leading: number;           // Line leading (spacing)
+  textRise: number;          // Vertical offset (subscript/superscript)
   fontSize: number;
-  fontName: string;
+  fontName: string | null;   // Current font name (null if not set)
+  renderingMode: number;     // Text rendering mode
 }
 ```
 
@@ -131,15 +133,14 @@ interface TextState {
 
 ```typescript
 interface GraphicsState {
-  ctm: number[];            // Current transformation matrix
-  fillColor: Color;
-  strokeColor: Color;
+  ctm: number[];              // Current transformation matrix
+  nonStrokingColor: Color;    // Fill color
+  strokingColor: Color;       // Stroke color
   lineWidth: number;
   lineCap: number;
   lineJoin: number;
   miterLimit: number;
-  dashArray: number[];
-  dashPhase: number;
+  dash: [number[], number] | null;  // [dashArray, dashPhase] or null
 }
 ```
 
