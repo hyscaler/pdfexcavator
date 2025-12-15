@@ -38,15 +38,16 @@ function removeHeadersFooters(text) {
 import { correctText, autoCorrectText } from 'pdfexcavator';
 
 // Automatic correction
-const fixed = autoCorrectText(rawText);
+const result = autoCorrectText(rawText);
+const fixed = result.text;
 
 // Manual options
 const fixed = correctText(rawText, {
-  numbersToLetters: true,   // 0→o, 1→l, 3→e
-  ligatures: true,          // ﬁ→fi, ﬂ→fl
-  quotes: true,             // Normalize quotes
-  dashes: true,             // Normalize dashes
-  whitespace: true          // Fix whitespace
+  numberToLetter: true,       // 0→o, 1→l, 3→e
+  expandLigatures: true,      // ﬁ→fi, ﬂ→fl
+  normalizeQuotes: true,      // Normalize quotes
+  normalizeDashes: true,      // Normalize dashes
+  normalizeWhitespace: true   // Fix whitespace
 });
 ```
 

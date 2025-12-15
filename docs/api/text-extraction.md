@@ -185,22 +185,22 @@ Fix common OCR/encoding issues in extracted text.
 import { correctText, autoCorrectText, detectEncodingIssues } from 'pdfexcavator';
 
 // Auto-detect and fix
-const fixed = autoCorrectText(text);
+const result = autoCorrectText(text);
+console.log(result.text);  // Corrected text
 
 // Manual options
 const fixed = correctText(text, {
-  numbersToLetters: true,  // 0→o, 1→l, 3→e
-  ligatures: true,         // ﬁ→fi, ﬂ→fl
-  quotes: true,            // Normalize quotes
-  dashes: true,            // Normalize dashes
-  whitespace: true         // Fix whitespace
+  numberToLetter: true,       // 0→o, 1→l, 3→e
+  expandLigatures: true,      // ﬁ→fi, ﬂ→fl
+  normalizeQuotes: true,      // Normalize quotes
+  normalizeDashes: true,      // Normalize dashes
+  normalizeWhitespace: true   // Fix whitespace
 });
 
 // Check for issues
 const issues = detectEncodingIssues(text);
-if (issues.hasIssues) {
-  console.log('Issues:', issues.types);
-}
+console.log('Issues:', issues.issues);
+console.log('Score:', issues.score);
 ```
 
 ## Precision Extraction

@@ -147,9 +147,9 @@ const ocrText = await page.extractTextRaw();
 
 // Fix common OCR errors
 const fixed = correctText(ocrText, {
-  numbersToLetters: true,  // 0→o, 1→l, 3→e
-  ligatures: true,         // ﬁ→fi
-  whitespace: true         // Fix spacing
+  numberToLetter: true,       // 0→o, 1→l, 3→e
+  expandLigatures: true,      // ﬁ→fi
+  normalizeWhitespace: true   // Fix spacing
 });
 ```
 

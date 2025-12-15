@@ -305,20 +305,23 @@ Fix common character encoding issues.
 
 ```typescript
 const fixed = correctText(text, {
-  numbersToLetters: true,  // 0→o, 1→l, 3→e, 5→s, 8→b
-  ligatures: true,         // ﬁ→fi, ﬂ→fl
-  quotes: true,            // Normalize quotes
-  dashes: true,            // Normalize dashes
-  whitespace: true         // Fix whitespace
+  numberToLetter: true,       // 0→o, 1→l, 3→e, 5→s, 8→b
+  expandLigatures: true,      // ﬁ→fi, ﬂ→fl
+  normalizeQuotes: true,      // Normalize quotes
+  normalizeDashes: true,      // Normalize dashes
+  normalizeWhitespace: true   // Fix whitespace
 });
 ```
 
-### autoCorrectText(text)
+### autoCorrectText(text, threshold?)
 
-Auto-detect and fix encoding issues.
+Auto-detect and fix encoding issues. Returns an object with the corrected text.
 
 ```typescript
-const fixed = autoCorrectText(text);
+const result = autoCorrectText(text);
+console.log(result.text);           // Corrected text
+console.log(result.corrected);      // boolean - was correction applied?
+console.log(result.issuesDetected); // Array of detected issues
 ```
 
 ### detectEncodingIssues(text)
@@ -327,10 +330,9 @@ Detect encoding issues in text.
 
 ```typescript
 const issues = detectEncodingIssues(text);
-if (issues.hasIssues) {
-  console.log('Issue types:', issues.types);
-  console.log('Suggested corrections:', issues.suggestions);
-}
+console.log('Issues:', issues.issues);
+console.log('Score:', issues.score);
+console.log('Suggestions:', issues.suggestions);
 ```
 
 ### createTextCorrector(options)
@@ -339,8 +341,8 @@ Create reusable corrector function.
 
 ```typescript
 const corrector = createTextCorrector({
-  numbersToLetters: true,
-  ligatures: true
+  numberToLetter: true,
+  expandLigatures: true
 });
 
 const fixed1 = corrector(text1);
